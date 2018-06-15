@@ -2,6 +2,7 @@
 
 from Crypto.PublicKey import RSA
 from pyTraceability import api_interface
+from Crypto.Hash import SHA256
 
 class Key:
     def __init__(self, keyfile = None):
@@ -22,3 +23,8 @@ class Key:
     def register_key(self, key_name):
         public_key = self.key.publickey().export_key()
         api_interface.register_key(key_name, public_key)
+    
+    #Obtener hash
+    def get_hash(self):
+        public_key = self.key.publickey().export_key()
+        return SHA256.new(public_key).hexdigest()
