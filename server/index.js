@@ -9,5 +9,5 @@ app.use(bodyParser.json());
 app.use(handler.router);
 
 app.listen(8080, function() {
-  console.log("Trazability server running...");
+  console.log("Traceability server running...");
 });

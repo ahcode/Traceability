@@ -1,0 +1,4 @@
+{
+    "max_seconds_delay": 240,
+    "seconds_threshold": 5
+}

@@ -8,6 +8,7 @@ CREATE TABLE keys(
 
 CREATE TABLE transactions(
 	hash char(64) PRIMARY KEY NOT NULL,
+	type smallint NOT NULL,
 	transmitter char(64) REFERENCES keys NOT NULL,
 	receiver char(64) REFERENCES keys,
 	server_timestamp timestamp DEFAULT NOW() NOT NULL,
