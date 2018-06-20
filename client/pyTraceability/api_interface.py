@@ -13,3 +13,10 @@ def register_key(key_name,  public_key):
     if (r.text != 'OK'):
         raise Exception("Communication error. " + r.text)
 
+def send_transaction(transaction):
+    try:
+        r = requests.post(API_URL + "/newtransaction", transaction)
+    except:
+        raise Exception("Connection error.")
+    if (r.text != 'OK'):
+        raise Exception("Communication error. " + r.text)
