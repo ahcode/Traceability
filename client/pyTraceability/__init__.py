@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from time import time
 import json
 from pyTraceability.keys import Key
 from pyTraceability.api_interface import send_transaction
@@ -24,7 +25,7 @@ class Connection():
 
     def __newtransaction(self, transaction_type, transmitter, receiver, data):
         ordered_data = OrderedDict(sorted(data.items()))
-        transaction = [("type", transaction_type), ("mode", self.mode), ("transmitter", transmitter), ("data", ordered_data)]
+        transaction = [("type", transaction_type), ("mode", self.mode), ("transmitter", transmitter), ("timestamp", int(time())), ("data", ordered_data)]
         transaction = OrderedDict(transaction)
         serialized_transaction = json.dumps(transaction, separators = (',',':'))
         sign = self.key.get_sign(serialized_transaction)

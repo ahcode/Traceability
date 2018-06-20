@@ -34,4 +34,4 @@ class Key:
     
     #Obtener la firma de una cadena de texto
     def get_sign(self, text):
-        return
+        return "test"

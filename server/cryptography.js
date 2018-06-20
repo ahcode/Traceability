@@ -8,5 +8,6 @@ module.exports.create_hash = function(text){
 module.exports.validate_transaction = function(json){
     //Función para crear el hash y validar la firma
     //MANTENER EL ORDEN PARA CREAR EL HASH
+    json["hash"] = "test";
     return true;
 };

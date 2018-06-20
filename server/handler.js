@@ -3,10 +3,6 @@ var db = require('./db.js');
 var crypto = require('./cryptography.js');
 var utils = require('./utils.js');
 
-router.post('/new_transaction', function(req, res) {
-    res.send("Post received.");
-});
-
 router.post('/register', function(req, res) {
     //Falta variable para controlar si el registro está abierto o cerrado
     var json = req.body;
@@ -33,6 +29,7 @@ router.post('/newtransaction', function(req, res) {
         res.send("Bad sign");
     else{
         //Añadir a la base de datos
+        json["data"] = JSON.stringify(json["data"], null, 0);
         db.newtransaction(json,
         (err) => {
             //TODO mejorar tratamiento de errores

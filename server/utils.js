@@ -9,11 +9,9 @@ module.exports.checkregisterformat = function(json){
 }
 
 module.exports.checktransactionformat = function(json){
-    var now = parseInt((new Date()).getTime() / 1000);
-    //console.log(now);
     if (!json.hasOwnProperty("type") || typeof json["type"] != 'number' ||
         json["type"] < 0 || json["type"] > 2 ||
-        !json.hasOwnProperty("mode") || typeof json["type"] != 'number' ||
+        !json.hasOwnProperty("mode") || typeof json["mode"] != 'number' ||
         json["mode"] < 0 || json["mode"] > 3 ||
         !json.hasOwnProperty("transmitter") || typeof json["transmitter"] != 'string' ||
         !json.hasOwnProperty("timestamp") || typeof json["timestamp"] != 'number' ||

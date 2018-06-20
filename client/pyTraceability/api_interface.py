@@ -1,6 +1,7 @@
 import os
 API_URL = os.environ['TRACEABILITY_API_URL']
 import requests
+import json
 
 def register_key(key_name,  public_key):
     json_data = {"name": key_name, "key": public_key}
@@ -15,7 +16,8 @@ def register_key(key_name,  public_key):
 
 def send_transaction(transaction):
     try:
-        r = requests.post(API_URL + "/newtransaction", transaction)
+        headers={'Content-type': 'application/json', 'charset': 'utf-8'}
+        r = requests.post(API_URL + "/newtransaction", headers = headers, data = transaction)
     except:
         raise Exception("Connection error.")
     if (r.text != 'OK'):
