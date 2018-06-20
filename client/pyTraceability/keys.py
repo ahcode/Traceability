@@ -34,4 +34,5 @@ class Key:
     
     #Obtener la firma de una cadena de texto
     def get_sign(self, text):
+        hash = SHA256.new(text.encode("utf-8")).hexdigest()
         return "test"

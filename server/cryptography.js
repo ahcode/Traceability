@@ -1,13 +1,16 @@
 var crypto = require('crypto');
 
 module.exports.create_hash = function(text){
-    var hash = crypto.createHash('sha256').update(text, 'ascii').digest('hex')
+    var hash = crypto.createHash('sha256').update(text, 'utf-8').digest('hex')
     return hash;
 };
 
+//Función para crear el hash y validar la firma
 module.exports.validate_transaction = function(json){
-    //Función para crear el hash y validar la firma
-    //MANTENER EL ORDEN PARA CREAR EL HASH
-    json["hash"] = "test";
+    var aux_sign = json["sign"]
+    delete json["sign"]
+    var serialized = JSON.stringify(json, null, 0);
+    json["sign"] = aux_sign
+    json["hash"] = module.exports.create_hash(serialized)
     return true;
 };
