@@ -16,15 +16,15 @@ module.exports.newkey = function(name, hash, public_key, callback){
     )
 }
 
-module.exports.newtransaction = function(hash, type, transmitter, receiver, client_timestamp, data, sign, callback){
-    var query = "INSERT INTO transactions (hash, type, transmitter, receiver, client_timestamp, transaction_data, sign) \
-    VALUES ('" + hash + "', " + type + ", '" + transmitter + "', ";
-    if (receiver){
-        query += "'" + receiver + "', ";
+module.exports.newtransaction = function(transaction, callback){
+    var query = "INSERT INTO transactions (hash, type, mode, transmitter, receiver, client_timestamp, transaction_data, sign) \
+    VALUES ('" + transaction["hash"] + "', " + transaction["type"] + ", '" + transaction["mode"] + ", '" + transaction["transmitter"] + "', ";
+    if (transaction["receiver"]){
+        query += "'" + transaction["receiver"] + "', ";
     }else{
         query += "NULL, ";
     }
-    query += "to_timestamp(" + client_timestamp + "), '" + data + "', '" + sign + "');"
+    query += "to_timestamp(" + transaction["client_timestamp"] + "), '" + transaction["data"] + "', '" + transaction["sign"] + "');"
     pool.query(
         query,
         (err, res) => {

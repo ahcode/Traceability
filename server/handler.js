@@ -33,11 +33,7 @@ router.post('/newtransaction', function(req, res) {
         res.send("Bad sign");
     else{
         //Añadir a la base de datos
-        if (json.hasOwnProperty("receiver"))
-            var receiver = json["receiver"];
-        else
-            var receiver = null;
-        db.newtransaction(json["hash"], json["type"], json["transmitter"], receiver, json["timestamp"], json["data"], json["sign"],
+        db.newtransaction(json,
         (err) => {
             //TODO mejorar tratamiento de errores
             if(err)
