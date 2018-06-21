@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
 from pyTraceability import api_interface
 
 class Key:
@@ -34,5 +35,6 @@ class Key:
     
     #Obtener la firma de una cadena de texto
     def get_sign(self, text):
-        hash = SHA256.new(text.encode("utf-8")).hexdigest()
-        return "test"
+        data_hash = SHA256.new(text.encode("utf-8"))
+        signer = PKCS1_v1_5.new(self.key)
+        return signer.sign(data_hash).hex()

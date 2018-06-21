@@ -25,18 +25,22 @@ router.post('/newtransaction', function(req, res) {
     var json = req.body;
     if (!utils.checktransactionformat(json))
         res.send("Bad format");
-    else if(!crypto.validate_transaction(json))
-        res.send("Bad sign");
     else{
-        //Añadir a la base de datos
-        json["data"] = JSON.stringify(json["data"], null, 0);
-        db.newtransaction(json,
-        (err) => {
-            //TODO mejorar tratamiento de errores
-            if(err)
-                res.send("Database error.");
-            else
-                res.send("OK");
+        crypto.validate_transaction(json, (err) => {
+            if (err)
+                res.send("Bad sign");
+            else{
+                //Añadir a la base de datos
+                json["data"] = JSON.stringify(json["data"], null, 0);
+                db.newtransaction(json,
+                (err) => {
+                    //TODO mejorar tratamiento de errores
+                    if(err)
+                        res.send("Database error.");
+                    else
+                        res.send("OK");
+                });
+            }
         });
     }
 });

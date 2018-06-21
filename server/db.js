@@ -3,9 +3,9 @@ const pool = new pg.Pool();
 
 module.exports.newkey = function(name, hash, public_key, callback){
     //active = TRUE por defecto solo para pruebas
+    query = "INSERT INTO keys (name, hash, public_key, active) VALUES ('" + name + "', '" + hash + "', '" + public_key + "', TRUE);"
     pool.query(
-        "INSERT INTO keys (name, hash, public_key, active) \
-        VALUES ('" + name + "', '" + hash + "', '" + public_key + "', TRUE);",
+        query,
         (err, res) => {
             //TODO mejorar tratamiento de errores
             if (err)
@@ -33,6 +33,22 @@ module.exports.newtransaction = function(transaction, callback){
                 callback(true);
             else
                 callback(false);
+        }
+    )
+}
+
+module.exports.getpk = function(key_hash, callback){
+    query = "SELECT public_key FROM keys WHERE hash = '" + key_hash + "' and active = true;"
+    pool.query(
+        query,
+        (err, res) => {
+            //TODO mejorar tratamiento de errores
+            if (err)
+                callback(true);
+            else if (res.rowCount == 0)
+                callback(true);
+            else
+                callback(false, res.rows[0].public_key);
         }
     )
 }
