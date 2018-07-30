@@ -23,7 +23,8 @@ class Connection():
         #Conectar a la api y esperar una determinada respuesta
         #Si no se recibe lanzar excepción
 
-    def __newtransaction(self, transaction_type, transmitter, receiver, data):
+    def __newtransaction(self, transaction_type, receiver, data):
+        transmitter = self.key.get_hash()
         ordered_data = OrderedDict(sorted(data.items()))
         transaction = [("type", transaction_type), ("mode", self.mode), ("transmitter", transmitter), ("timestamp", int(time())), ("data", ordered_data)]
         transaction = OrderedDict(transaction)
@@ -41,4 +42,4 @@ class Connection():
         if not isinstance(origin, str): raise Exception("origin must be a string")
 
         data = {"product": product, "quantity": quantity, **kwargs}
-        self.__newtransaction(0, self.key.get_hash(), None, data)
+        self.__newtransaction(0, None, data)
