@@ -23,9 +23,12 @@ router.post('/register', function(req, res) {
 
 router.post('/newtransaction', function(req, res) {
     var json = req.body;
-    if (!utils.checktransactionformat(json))
-        res.send("Bad format");
+    //Comprobar formato de transacción
+    format_err = utils.checktransactionformat(json)
+    if (!format_err.correct)
+        res.send("Bad format: " + format_err.msg);
     else{
+        //Validar la firma
         crypto.validate_transaction(json, (err) => {
             if (err)
                 res.send("Bad sign");
