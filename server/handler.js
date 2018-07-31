@@ -35,14 +35,8 @@ router.post('/newtransaction', function(req, res) {
             else{
                 //Añadir a la base de datos
                 json["data"] = JSON.stringify(json["data"], null, 0);
-                db.newtransaction(json,
-                (err) => {
-                    //TODO mejorar tratamiento de errores
-                    if(err)
-                        res.send("Database error.");
-                    else
-                        res.send("OK");
-                });
+                db.newtransaction(json);
+                res.send("OK");
             }
         });
     }
