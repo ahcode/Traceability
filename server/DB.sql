@@ -17,3 +17,18 @@ CREATE TABLE transactions(
 	transaction_data json NOT NULL,
 	sign char(256) NOT NULL
 );
+
+CREATE TABLE available_inputs(
+	key_hash char(64) REFERENCES keys NOT NULL,
+	product varchar(64) NOT NULL,
+	index smallint NOT NULL,
+	t_hash char(64) REFERENCES transactions NOT NULL,
+	quantity integer NOT NULL,
+	PRIMARY KEY(key_hash, product, index)
+);
+
+CREATE TABLE t_inputs(
+	t_hash char(64) REFERENCES transactions NOT NULL,
+	input char(64) REFERENCES transactions NOT NULL,
+	PRIMARY KEY(t_hash, input)
+);
