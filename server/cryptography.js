@@ -7,19 +7,22 @@ module.exports.create_hash = function(text){
 };
 
 //Función para crear el hash y validar la firma
-module.exports.validate_transaction = function(json, callback){
+module.exports.validate_transaction = function(json){
     var aux_sign = json["sign"]
     delete json["sign"]
     var serialized = JSON.stringify(json, null, 0);
     json["sign"] = aux_sign
     json["hash"] = module.exports.create_hash(serialized, ['type', 'mode', 'transmitter', 'timestamp', 'data'])
-    db.getpk(json["transmitter"], (err, pk) => {
-        if (err)
-            callback(true);
-        else{
+    return new Promise((suc, rej) => {
+        db.getpk(json["transmitter"])
+        .then(function(pk){
             var verify = crypto.createVerify('SHA256');
             verify.update(serialized);
-            callback(!verify.verify(pk, json["sign"], 'hex'));
-        }
+            correct = verify.verify(pk, json["sign"], 'hex');
+            if (correct)
+                suc();
+            else
+                rej("Bad Sign");
+        }, function(msg){ rej(msg); });
     });
 };

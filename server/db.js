@@ -1,19 +1,24 @@
 const pg = require('pg');
 const pool = new pg.Pool();
 
-module.exports.newkey = function(name, hash, public_key, callback){
+module.exports.newkey = function(name, hash, public_key){
     //active = TRUE por defecto solo para pruebas
     query = "INSERT INTO keys (name, hash, public_key, active) VALUES ('" + name + "', '" + hash + "', '" + public_key + "', TRUE);"
-    pool.query(
-        query,
-        (err, res) => {
-            //TODO mejorar tratamiento de errores
-            if (err)
-                callback(true);
-            else
-                callback(false);
-        }
-    )
+    
+    return new Promise((suc, rej) => {
+        pool.query(query, (err, res) => {
+                if (err){
+                    if (err.code == '23505')
+                        rej("Duplicated key");
+                    else{
+                        console.log("DATABASE ERROR");
+                        rej("Database error");
+                    }
+                }else
+                    suc();
+            }
+        )
+    })
 }
 
 module.exports.newtransaction = function(transaction){
@@ -25,29 +30,30 @@ module.exports.newtransaction = function(transaction){
         query += "NULL, ";
     }
     query += "to_timestamp(" + transaction["timestamp"] + "), '" + transaction["data"] + "', '" + transaction["sign"] + "');"
-    pool.query(
-        query,
-        (err, res) => {
-            //TODO mejorar tratamiento de errores
-            if (err)
-                console.log("DATABASE ERROR");
-        }
-    )
+    
+    return new Promise((suc, rej) => {
+        pool.query(query, (err, res) => {
+                if (err){
+                    if (err.code != '23505') //Si la transacción está repetida, no hace nada
+                        console.log("DATABASE ERROR");
+                }else
+                    suc();
+            }
+        )
+    })
 }
 
 module.exports.getpk = function(key_hash, callback){
     query = "SELECT public_key FROM keys WHERE hash = '" + key_hash + "' and active = true;"
-    pool.query(
-        query,
-        (err, res) => {
-            //TODO mejorar tratamiento de errores
+    return new Promise((suc, rej) => {
+        pool.query(query, (err, res) => {
             if (err){
                 console.log("DATABASE ERROR");
-                callback(true);
+                rej("Database error.")
             }else if (res.rowCount == 0)
-                callback(true);
+                rej("The key doesn't exist")
             else
-                callback(false, res.rows[0].public_key);
-        }
-    )
+                suc(res.rows[0].public_key);
+        });
+    });
 }

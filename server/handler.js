@@ -4,21 +4,18 @@ var crypto = require('./cryptography.js');
 var utils = require('./utils.js');
 
 router.post('/register', function(req, res) {
-    //Falta variable para controlar si el registro está abierto o cerrado
-    var json = req.body;
-    //Comprobar formato del objeto recibido
-    if (!utils.checkregisterformat(json))
-        res.send("Bad format");
-    else
-        //Añadir a la base de datos
-        db.newkey(json["name"], crypto.create_hash(json["key"]), json["key"],
-        (err) => {
-            //TODO mejorar tratamiento de errores
-            if(err)
-                res.send("Database error.");
-            else
-                res.send("OK");
-        });
+    if (true){ //FALTA COMPROBAR SI EL REGISTRO ESTÁ ABIERTO
+        var json = req.body;
+        //Comprobar formato del objeto recibido
+        if (!utils.checkregisterformat(json))
+            res.send("Bad format");
+        else
+            //Añadir a la base de datos
+            db.newkey(json["name"], crypto.create_hash(json["key"]), json["key"])
+            .then(function(){res.send("OK")}, function(msg){res.send(msg)});
+    }else{
+        res.send("Server is not accepting new keys");
+    }
 });
 
 router.post('/newtransaction', function(req, res) {
@@ -29,15 +26,13 @@ router.post('/newtransaction', function(req, res) {
         res.send("Bad format: " + format_err.msg);
     else{
         //Validar la firma
-        crypto.validate_transaction(json, (err) => {
-            if (err)
-                res.send("Bad sign");
-            else{
-                //Añadir a la base de datos
-                json["data"] = JSON.stringify(json["data"], null, 0);
-                db.newtransaction(json);
-                res.send("OK");
-            }
+        crypto.validate_transaction(json).then(function(){
+            json["data"] = JSON.stringify(json["data"], null, 0);
+            db.newtransaction(json).then(function(){return}); //TODO
+            res.send("OK");
+        },
+        function(msg){
+            res.send(msg);
         });
     }
 });
