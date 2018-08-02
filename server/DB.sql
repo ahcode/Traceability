@@ -21,10 +21,8 @@ CREATE TABLE transactions(
 CREATE TABLE available_inputs(
 	key_hash char(64) REFERENCES keys NOT NULL,
 	product varchar(64) NOT NULL,
-	index smallint NOT NULL,
-	t_hash char(64) REFERENCES transactions NOT NULL,
-	quantity integer NOT NULL,
-	PRIMARY KEY(key_hash, product, index)
+	inputs json[] NOT NULL,
+	PRIMARY KEY(key_hash, product)
 );
 
 CREATE TABLE t_inputs(
