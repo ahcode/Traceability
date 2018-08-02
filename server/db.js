@@ -29,7 +29,7 @@ module.exports.newtransaction = function(transaction){
     }else{
         query += "NULL, ";
     }
-    query += "to_timestamp(" + transaction.timestamp + "), '" + transaction.data + "', '" + transaction.sign + "');"
+    query += "to_timestamp(" + transaction.timestamp + "), '" + JSON.stringify(transaction.data, null, 0) + "', '" + transaction.sign + "');"
     
     return new Promise((suc, rej) => {
         pool.query(query, (err, res) => {
@@ -56,4 +56,20 @@ module.exports.getpk = function(key_hash){
                 suc(res.rows[0].public_key);
         });
     });
+}
+
+module.exports.new_available_inputs = function(key, product, inputs){
+    return;
+}
+
+module.exports.del_available_inputs = function(key, product){
+    return;
+}
+
+module.exports.get_available_inputs = function(key, product){
+    return;
+}
+
+module.exports.update_available_inputs = function(key, product, inputs){
+    return;
 }
