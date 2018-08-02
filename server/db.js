@@ -23,13 +23,13 @@ module.exports.newkey = function(name, hash, public_key){
 
 module.exports.newtransaction = function(transaction){
     var query = "INSERT INTO transactions (hash, type, mode, transmitter, receiver, client_timestamp, transaction_data, sign) \
-    VALUES ('" + transaction["hash"] + "', " + transaction["type"] + ", " + transaction["mode"] + ", '" + transaction["transmitter"] + "', ";
-    if (transaction["receiver"]){
-        query += "'" + transaction["receiver"] + "', ";
+    VALUES ('" + transaction.hash + "', " + transaction.type + ", " + transaction.mode + ", '" + transaction.transmitter + "', ";
+    if (transaction.receiver){
+        query += "'" + transaction.receiver + "', ";
     }else{
         query += "NULL, ";
     }
-    query += "to_timestamp(" + transaction["timestamp"] + "), '" + transaction["data"] + "', '" + transaction["sign"] + "');"
+    query += "to_timestamp(" + transaction.timestamp + "), '" + transaction.data + "', '" + transaction.sign + "');"
     
     return new Promise((suc, rej) => {
         pool.query(query, (err, res) => {
@@ -43,7 +43,7 @@ module.exports.newtransaction = function(transaction){
     })
 }
 
-module.exports.getpk = function(key_hash, callback){
+module.exports.getpk = function(key_hash){
     query = "SELECT public_key FROM keys WHERE hash = '" + key_hash + "' and active = true;"
     return new Promise((suc, rej) => {
         pool.query(query, (err, res) => {

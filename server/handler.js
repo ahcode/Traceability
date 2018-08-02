@@ -11,7 +11,7 @@ router.post('/register', function(req, res) {
             res.send("Bad format");
         else
             //Añadir a la base de datos
-            db.newkey(json["name"], crypto.create_hash(json["key"]), json["key"])
+            db.newkey(json.name, crypto.create_hash(json.key), json.key)
             .then(function(){res.send("OK")}, function(msg){res.send(msg)});
     }else{
         res.send("Server is not accepting new keys");
@@ -27,7 +27,7 @@ router.post('/newtransaction', function(req, res) {
     else{
         //Validar la firma
         crypto.validate_transaction(json).then(function(){
-            json["data"] = JSON.stringify(json["data"], null, 0);
+            json.data = JSON.stringify(json.data, null, 0);
             db.newtransaction(json).then(function(){return}); //TODO
             res.send("OK");
         },
