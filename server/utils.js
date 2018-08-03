@@ -104,7 +104,7 @@ module.exports.update_inputs = function(transaction){
 
     //Eliminar productos utilizados del emisor y localizar transacciones precedentes
     used_inputs = [];
-    for (i = 0; i < p_in.length; i++){
+    for (let i = 0; i < p_in.length; i++){
         db.get_available_inputs(transaction.transmitter, p_in[i])
         .then(function(inputs){
             if(inputs == null){
@@ -154,7 +154,7 @@ module.exports.update_inputs = function(transaction){
     }
 
     //Añadir productos al receptor
-    for(i = 0; i < p_out.length; i++){
+    for(let i = 0; i < p_out.length; i++){
         db.get_available_inputs(receiver, p_out[i])
         .then(function(inputs){
             new_input = {'t_hash': [transaction.hash], 'quantity': q_out[i]};
@@ -163,7 +163,7 @@ module.exports.update_inputs = function(transaction){
                 //TODO
                 //Registrar nuevo id en tabla de bd
             }
-            if(inputs == null){
+            if(!inputs){
                 inputs = [new_input];
                 db.new_available_inputs(transaction.transmitter, p_out[i], inputs);
             }else{

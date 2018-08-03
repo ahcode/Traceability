@@ -89,6 +89,8 @@ module.exports.get_available_inputs = function(key, product){
         pool.query(query, (err, res) => {
             if (err)
                 console.log("DATABASE ERROR");
+            else if (res.rowCount == 0)
+                suc(null);
             else
                 suc(res.rows[0].inputs);
         });
