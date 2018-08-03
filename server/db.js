@@ -2,8 +2,7 @@ const pg = require('pg');
 const pool = new pg.Pool();
 
 module.exports.newkey = function(name, hash, public_key){
-    //active = TRUE por defecto solo para pruebas
-    query = "INSERT INTO keys (name, hash, public_key, active) VALUES ('" + name + "', '" + hash + "', '" + public_key + "', TRUE);"
+    query = "INSERT INTO keys (name, hash, public_key) VALUES ('" + name + "', '" + hash + "', '" + public_key + "');"
     
     return new Promise((suc, rej) => {
         pool.query(query, (err, res) => {
@@ -17,8 +16,8 @@ module.exports.newkey = function(name, hash, public_key){
                 }else
                     suc();
             }
-        )
-    })
+        );
+    });
 }
 
 module.exports.newtransaction = function(transaction){
@@ -39,12 +38,12 @@ module.exports.newtransaction = function(transaction){
                 }else
                     suc();
             }
-        )
-    })
+        );
+    });
 }
 
 module.exports.getpk = function(key_hash){
-    query = "SELECT public_key FROM keys WHERE hash = '" + key_hash + "' and active = true;"
+    query = "SELECT public_key FROM keys WHERE hash = '" + key_hash + "' AND active = true;"
     return new Promise((suc, rej) => {
         pool.query(query, (err, res) => {
             if (err){
@@ -59,17 +58,55 @@ module.exports.getpk = function(key_hash){
 }
 
 module.exports.new_available_inputs = function(key, product, inputs){
-    return;
+    query = "INSERT INTO available_inputs (key_hash, product, inputs) VALUES ('" + key + "', '" + product + "', ARRAY[";
+    for(i = 0; i < inputs.length; i++){
+        if (i != 0)
+            query += ", ";
+        query += "'" + JSON.stringify(inputs[i], null, 0) + "'";
+    }
+    query += "]::json[]);"
+    pool.query(query, (err, res) => {
+            if (err){
+                console.log("DATABASE ERROR");
+            }
+        }
+    );
 }
 
 module.exports.del_available_inputs = function(key, product){
-    return;
+    query = "DELETE FROM available_inputs WHERE key_hash = '" + key + "' AND product = '" + product + "';";
+    pool.query(query, (err, res) => {
+            if (err){
+                console.log("DATABASE ERROR");
+            }
+        }
+    );
 }
 
 module.exports.get_available_inputs = function(key, product){
-    return;
+    query = "SELECT inputs FROM available_inputs WHERE key_hash = '" + key + "' AND product = '" + product + "';";
+    return new Promise((suc, rej) => {
+        pool.query(query, (err, res) => {
+            if (err)
+                console.log("DATABASE ERROR");
+            else
+                suc(res.rows[0].inputs);
+        });
+    });
 }
 
 module.exports.update_available_inputs = function(key, product, inputs){
-    return;
+    query = "UPDATE available_inputs SET inputs = ARRAY[";
+    for(i = 0; i < inputs.length; i++){
+        if (i != 0)
+            query += ", ";
+        query += "'" + JSON.stringify(inputs[i], null, 0) + "'";
+    }
+    query += "]::json[] WHERE key_hash = '" + key + "' AND product = '" + product + "';";
+    pool.query(query, (err, res) => {
+            if (err){
+                console.log("DATABASE ERROR");
+            }
+        }
+    );
 }
