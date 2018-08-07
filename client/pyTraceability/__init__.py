@@ -78,8 +78,18 @@ class Connection():
 
         if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
 
+        data = {**additional_data}
+        if product_in_list.length() == 1:
+            data['product_in'] = product_in_list[0]
+        else:
+            data['product_in'] = product_in_list
         
-        #TODO
+        if product_out_list.length() == 1:
+            data['product_out'] = product_out_list[0]
+        else:
+            data['product_out'] = product_out_list
+
+        self.__newtransaction(2, mode, receiver, data)
 
     def change_type_by_id(self, product_in: str, id_in: str, product_out_list: list, receiver: str = None, additional_data: dict = {}):
         """Cambia de tipo de producto especificando un id para el producto de entrada.
@@ -88,8 +98,15 @@ class Connection():
         Cada tupla incluirá el producto en su primer elemento y la cantidad en el segundo elemento.
         Ej: [('out1', 6), ('out2', 11), ...]
         Si no se indica receptor los productos de salida no cambiarán de etapa, seguirań perteneciendo al emisor."""
-        return
-        #TODO
+
+        data = {'product_in': (product_in, id_in), **additional_data}
+        
+        if product_out_list.length() == 1:
+            data['product_out'] = product_out_list[0]
+        else:
+            data['product_out'] = product_out_list
+
+        self.__newtransaction(2, 3, receiver, data)
 
     def end_product(self, mode: int, destination: str, product: str, quantity: int = None, additional_data: dict = {}):
         """Indica que un producto ha salido de la cadena de producción y su trazabilidad ha terminado.
