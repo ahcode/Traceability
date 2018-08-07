@@ -43,7 +43,7 @@ class Connection():
         Se establece el modo de transacción por defecto como 0 (mezcla) ya que el servidor no distingue
         modos en transacciones generadoras."""
 
-        data = {"product": [product, quantity], **additional_data}
+        data = {"product": (product, quantity), "origin": origin, **additional_data}
         self.__newtransaction(0, 0, None, data)
     
     def send(self, mode: int, receiver: str, product: str, quantity: int = None, additional_data: dict = {}):
@@ -56,7 +56,7 @@ class Connection():
         
         if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
 
-        data = {"product": [product, quantity], **additional_data}
+        data = {"product": (product, quantity), **additional_data}
         
         self.__newtransaction(2, mode, receiver, data)
 
@@ -119,15 +119,17 @@ class Connection():
 
         if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
         
-        return
-        #TODO
+        data = {"product": (product, quantity), "destination": destination, **additional_data}
+        self.__newtransaction(1, mode, None, data)
     
     def end_by_id(self, destination: str, product: str, product_id: str, additional_data: dict = {}):
         """Indica que un producto con id ha salido de la cadena de producción y su trazabilidad ha terminado.
         Es necesrio especificar un identificador de destino.
         La cantidad de producto será siempre 1 ya que el identificador se asigna siempre a una unidad de producto."""
-        return
-        #TODO
+
+        data = {"product": (product, product_id), "destination": destination, **additional_data}
+        self.__newtransaction(1, 3, None, data)
+
 
     def set_id(self, mode: int, product: str, new_id: str, receiver: str = None, additional_data: dict = {}):
         """Establece un identificador a una unidad de producto.
