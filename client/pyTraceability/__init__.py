@@ -43,7 +43,7 @@ class Connection():
         Se establece el modo de transacción por defecto como 0 (mezcla) ya que el servidor no distingue
         modos en transacciones generadoras."""
 
-        data = {"product": (product, quantity), "origin": origin, **additional_data}
+        data = {"product": [(product, quantity)], "origin": origin, **additional_data}
         self.__newtransaction(0, 0, None, data)
     
     def send(self, mode: int, receiver: str, product: str, quantity: int = None, additional_data: dict = {}):
@@ -56,7 +56,7 @@ class Connection():
         
         if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
 
-        data = {"product": (product, quantity), **additional_data}
+        data = {"product": [(product, quantity)], **additional_data}
         
         self.__newtransaction(2, mode, receiver, data)
 
@@ -64,7 +64,7 @@ class Connection():
         """Envía producto con id a otra etapa de la cadena.
         Utiliza el modo 3 (Arbitrario) para la selección del producto."""
 
-        data = {"product": [product, product_id], **additional_data}
+        data = {"product": [(product, product_id)], **additional_data}
 
         self.__newtransaction(2, 3, receiver, data)
     
@@ -78,16 +78,7 @@ class Connection():
 
         if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
 
-        data = {**additional_data}
-        if product_in_list.length() == 1:
-            data['product_in'] = product_in_list[0]
-        else:
-            data['product_in'] = product_in_list
-        
-        if product_out_list.length() == 1:
-            data['product_out'] = product_out_list[0]
-        else:
-            data['product_out'] = product_out_list
+        data = {'product_in': product_in_list, 'product_out': product_out_list, **additional_data}
 
         self.__newtransaction(2, mode, receiver, data)
 
@@ -99,12 +90,7 @@ class Connection():
         Ej: [('out1', 6), ('out2', 11), ...]
         Si no se indica receptor los productos de salida no cambiarán de etapa, seguirań perteneciendo al emisor."""
 
-        data = {'product_in': (product_in, id_in), **additional_data}
-        
-        if product_out_list.length() == 1:
-            data['product_out'] = product_out_list[0]
-        else:
-            data['product_out'] = product_out_list
+        data = {'product_in': [(product_in, id_in)], 'product_out': product_out_list, **additional_data}
 
         self.__newtransaction(2, 3, receiver, data)
 
@@ -119,7 +105,7 @@ class Connection():
 
         if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
         
-        data = {"product": (product, quantity), "destination": destination, **additional_data}
+        data = {"product": [(product, quantity)], "destination": destination, **additional_data}
         self.__newtransaction(1, mode, None, data)
     
     def end_by_id(self, destination: str, product: str, product_id: str, additional_data: dict = {}):
@@ -127,7 +113,7 @@ class Connection():
         Es necesrio especificar un identificador de destino.
         La cantidad de producto será siempre 1 ya que el identificador se asigna siempre a una unidad de producto."""
 
-        data = {"product": (product, product_id), "destination": destination, **additional_data}
+        data = {"product": [(product, product_id)], "destination": destination, **additional_data}
         self.__newtransaction(1, 3, None, data)
 
 
@@ -141,5 +127,5 @@ class Connection():
 
         if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
 
-        data = {"product": (product, 1), "new_id": new_id, **additional_data}
+        data = {"product": [(product, 1)], "new_id": new_id, **additional_data}
         self.__newtransaction(2, mode, receiver, data)
