@@ -112,3 +112,14 @@ module.exports.update_available_inputs = function(key, product, inputs){
         }
     );
 }
+
+module.exports.set_inputs = function(transaction, input_list){
+    query = "INSERT INTO t_inputs VALUES ($1, $2);"
+    for(i = 0; i < input_list.length; i++){
+        pool.query(query, [transaction, input_list[i]], (err, res) => {
+            if (err){
+                console.log("DATABASE ERROR");
+            }
+        });
+    }
+}
