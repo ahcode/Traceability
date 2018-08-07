@@ -9,10 +9,9 @@ class Connection():
     Sus métodos permiten comunicarse con el servidor de forma sencilla
     y realizar todo tipo de transacciones."""
 
-    def __init__(self, keyfile):
+    def __init__(self, keyfile: str):
         """Inicializa la conexión. Comprueba la conexión con el servidor así como la validez
         de la clave de la etapa."""
-        if not isinstance(keyfile, str): raise Exception("keyfile must be a string")
         self.key = Key(keyfile)
 
         self.__apicheck()
@@ -38,94 +37,90 @@ class Connection():
         serialized_transaction = json.dumps(transaction, separators = (',',':'))
         send_transaction(serialized_transaction)
 
-    def generate(self, origin, product, quantity, additional_data = {}):
+    def generate(self, origin: str, product: str, quantity: int, additional_data: dict = {}):
         """Transacción generadora.
         Añade materia prima a la cadena de producción. Es necesario especificar un identificador de origen.
         Se establece el modo de transacción por defecto como 0 (mezcla) ya que el servidor no distingue
         modos en transacciones generadoras."""
-        if not isinstance(product, str): raise Exception("product must be a string")
-        if not isinstance(quantity, int): raise Exception("quantity must be an integer")
-        if quantity <= 0: raise Exception("quantity must be greater than 0")
-        if not isinstance(origin, str): raise Exception("origin must be a string")
-        if not isinstance(additional_data, dict): raise Exception("additional_data must be a dictionary")
 
-        data = {"product": product, "quantity": quantity, **additional_data}
+        data = {"product": [product, quantity], **additional_data}
         self.__newtransaction(0, 0, None, data)
     
-    def send(self, mode, receiver, product, quantity = None, additional_data = {}):
+    def send(self, mode: int, receiver: str, product: str, quantity: int = None, additional_data: dict = {}):
         """Envía producto a otra etapa de la cadena.
         Permite 3 modos de selección del producto:
             0 - Mezcla
             1 - Cola
             2 - Pila
         Si no se especifica cantidad se enviará todo el producto que posee la etapa emisora."""
-        if not isinstance(mode, int): raise Exception("mode must be an integer")
-        if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
-        if not isinstance(receiver, str): raise Exception("product must be a string")
-        if not isinstance(product, str): raise Exception("product must be a string")
-        if quantity and not isinstance(quantity, int): raise Exception("quantity must be an integer or null")
-        if quantity and quantity <= 0: raise Exception("quantity must be greater than 0")
-        if not isinstance(additional_data, dict): raise Exception("additional_data must be a dictionary")
         
-        data = {"product": product, **additional_data}
-        if quantity: data['quantity'] = quantity
+        if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
+
+        data = {"product": [product, quantity], **additional_data}
         
         self.__newtransaction(2, mode, receiver, data)
 
-    def send_by_id(self, receiver, product, product_id, additional_data = {}):
+    def send_by_id(self, receiver: str, product: str, product_id: str, additional_data: dict = {}):
         """Envía producto con id a otra etapa de la cadena.
         Utiliza el modo 3 (Arbitrario) para la selección del producto."""
-        if not isinstance(receiver, str): raise Exception("product must be a string")
-        if not isinstance(product, str): raise Exception("product must be a string")
-        if not isinstance(product_id, 'str'): raise Exception("product_id must be a string")
-        if not isinstance(additional_data, dict): raise Exception("additional_data must be a dictionary")
 
-        data = {"product": product, "product_id": product_id, **additional_data}
+        data = {"product": [product, product_id], **additional_data}
 
         self.__newtransaction(2, 3, receiver, data)
     
-    def change_type(self, mode, product_in_list, product_out_list, receiver = None, additional_data = {}):
+    def change_type(self, mode: str, product_in_list: list, product_out_list: list, receiver: str = None, additional_data: dict = {}):
         """Cambia de tipo uno o varios productos.
-        La lista de productos de entrada se puede especificar de dos formas diferentes:
-            1 - Especificando cantidad - Ej: [('p1', 5), ('p2', 10), ...]
-            2 - Sin cantidades - Ej: ['p1', 'p2', 'p3'...]
-        La lista de productos de salida debe indicar siempre las cantidades de cada producto.
-        Ej: [('o1', 5), ('o2', 10), ...]
-        Si no se indica receptor los productos de salida no cambiarán de etapa, seguirań
-        perteneciendo al emisor."""
-        return
+        Las listas de entrada y salida de productos deberán ser una lista de tuplas.
+        Cada tupla incluirá el producto en su primer elemento y la cantidad en el segundo elemento.
+        En la lista de entrada, la cantidad se puede establecer como 'None' para utilizar todo el producto disponible.
+        Ej: [('in1', 5), ('in2', None), ...] - [('out1', 6), ('out2', 11), ...]
+        Si no se indica receptor los productos de salida no cambiarán de etapa, seguirań perteneciendo al emisor."""
+
+        if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
+
+        
         #TODO
 
-    def change_type_by_id(self, product_in, id_in, product_out_list, receiver = None, additional_data = {}):
+    def change_type_by_id(self, product_in: str, id_in: str, product_out_list: list, receiver: str = None, additional_data: dict = {}):
         """Cambia de tipo de producto especificando un id para el producto de entrada.
-        La cantidad de producto será siempre 1 ya que el identificador se asigna siempre a una unidad de producto.
-        La lista de productos de salida debe indicar siempre las cantidades de cada producto.
-        Ej: [('o1', 5), ('o2', 10), ...]
-        Si no se indica receptor los productos de salida no cambiarán de etapa, seguirań
-        perteneciendo al emisor."""
+        La cantidad de producto de entrada será siempre 1 ya que el identificador se asigna siempre a una unidad de producto.
+        La lista de salida de productos deberá ser una lista de tuplas.
+        Cada tupla incluirá el producto en su primer elemento y la cantidad en el segundo elemento.
+        Ej: [('out1', 6), ('out2', 11), ...]
+        Si no se indica receptor los productos de salida no cambiarán de etapa, seguirań perteneciendo al emisor."""
         return
         #TODO
 
-    def end_product(self, destination, product, quantity = None, additional_data = {}):
+    def end_product(self, mode: int, destination: str, product: str, quantity: int = None, additional_data: dict = {}):
         """Indica que un producto ha salido de la cadena de producción y su trazabilidad ha terminado.
         Es necesrio especificar un identificador de destino.
+        Permite 3 modos de selección del producto:
+            0 - Mezcla
+            1 - Cola
+            2 - Pila
         Si no se especifica cantidad se enviará todo el producto que posee la etapa emisora."""
+
+        if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
+        
         return
         #TODO
     
-    def end_by_id(self, destination, product, product_id, additional_data = {}):
+    def end_by_id(self, destination: str, product: str, product_id: str, additional_data: dict = {}):
         """Indica que un producto con id ha salido de la cadena de producción y su trazabilidad ha terminado.
         Es necesrio especificar un identificador de destino.
         La cantidad de producto será siempre 1 ya que el identificador se asigna siempre a una unidad de producto."""
         return
         #TODO
 
-    def set_id(self, mode, product, new_id, receiver = None, additional_data = {}):
+    def set_id(self, mode: int, product: str, new_id: str, receiver: str = None, additional_data: dict = {}):
         """Establece un identificador a una unidad de producto.
         Permite 3 modos de selección del producto:
             0 - Mezcla
             1 - Cola
             2 - Pila
         Si no se indica receptor el producto seguirá perteneciendo al emisor."""
+
+        if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
+
         return
         #TODO
