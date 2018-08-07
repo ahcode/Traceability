@@ -141,5 +141,5 @@ class Connection():
 
         if mode < 0 or mode > 2: raise Exception("mode must be between 0 and 2")
 
-        return
-        #TODO
+        data = {"product": (product, 1), "new_id": new_id, **additional_data}
+        self.__newtransaction(2, mode, receiver, data)
