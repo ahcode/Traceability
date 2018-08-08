@@ -104,7 +104,6 @@ function process_input(key, transaction_hash, mode, product, quantity){
             //No existe la entrada, se está utilizando producto que no posee
             //Marcar transacción erronea
         }else{
-            to_link = [];
             if(mode == 0)
                 mix_product(inputs);
             if(quantity != null){
@@ -113,7 +112,7 @@ function process_input(key, transaction_hash, mode, product, quantity){
                         el = inputs.length - 1;
                     else
                         el = 0;
-                    to_link.push(...inputs[el].t_hash);
+                    db.set_inputs(transaction_hash, inputs[el].t_hash, product)
                     if (quantity < inputs[el].quantity){
                         inputs[el].quantity -= quantity;
                         quantity = 0;
@@ -133,7 +132,8 @@ function process_input(key, transaction_hash, mode, product, quantity){
                 else
                     el = 0;
                 q_out = inputs[el].quantity;
-                to_link.push(...inputs[el].t_hash);
+                db.set_inputs(transaction_hash, inputs[el].t_hash, product)
+                db.set_quantity(transaction_hash, product, q_out)
                 inputs.splice(el, 1);
             }
             if (inputs.length > 0)
@@ -141,7 +141,6 @@ function process_input(key, transaction_hash, mode, product, quantity){
             else
                 db.del_available_inputs(key, product);
         }
-        db.set_inputs(transaction_hash, to_link);
         return q_out;
     });
 }

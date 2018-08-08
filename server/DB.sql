@@ -15,7 +15,8 @@ CREATE TABLE transactions(
 	server_timestamp timestamp DEFAULT NOW() NOT NULL,
 	client_timestamp timestamp NOT NULL,
 	transaction_data json NOT NULL,
-	sign char(256) NOT NULL
+	sign char(256) NOT NULL,
+	updated_quantity json DEFAULT NULL
 );
 
 CREATE TABLE available_inputs(
@@ -28,5 +29,12 @@ CREATE TABLE available_inputs(
 CREATE TABLE t_inputs(
 	t_hash char(64) REFERENCES transactions NOT NULL,
 	input char(64) REFERENCES transactions NOT NULL,
-	PRIMARY KEY(t_hash, input)
+	product varchar(64) NOT NULL,
+	PRIMARY KEY(t_hash, product)
+);
+
+CREATE TABLE product_id(
+	id varchar(64) PRIMARY KEY NOT NULL,
+	first_transaction char(64) REFERENCES transactions NOT NULL,
+	last_transaction char(64) REFERENCES transactions NOT NULL,
 );
