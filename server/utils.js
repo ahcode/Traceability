@@ -128,7 +128,7 @@ function process_input(key, transaction_hash, mode, product, quantity){
                     //Marcar transacción erronea
                 }
             }else{
-                if (transaction.mode == 2) //stack
+                if (mode == 2) //stack
                     el = inputs.length - 1;
                 else
                     el = 0;

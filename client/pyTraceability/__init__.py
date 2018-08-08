@@ -68,7 +68,7 @@ class Connection():
 
         self.__newtransaction(2, 3, receiver, data)
     
-    def change_type(self, mode: str, product_in_list: list, product_out_list: list, receiver: str = None, additional_data: dict = {}):
+    def change_type(self, mode: int, product_in_list: list, product_out_list: list, receiver: str = None, additional_data: dict = {}):
         """Cambia de tipo uno o varios productos.
         Las listas de entrada y salida de productos deberán ser una lista de tuplas.
         Cada tupla incluirá el producto en su primer elemento y la cantidad en el segundo elemento.
