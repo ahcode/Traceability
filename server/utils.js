@@ -83,12 +83,13 @@ module.exports.update_inputs = function(transaction){
     }
 
     //Añadir productos al receptor
+    var new_id = null;
     for(let i = 0; i < p_out.length; i++){
         if (p_out[i][1] != null){
             if (transaction.data.hasOwnProperty('new_id'))
-                var new_id = transaction.data.new_id;
+                new_id = transaction.data.new_id;
             else
-                var new_id = null;
+                new_id = null;
             process_output(receiver, transaction.hash, p_out[i][0], p_out[i][1], new_id);
         }
     };
@@ -150,7 +151,7 @@ function process_output(key, transaction_hash, product, quantity, new_id){
     .then(function(inputs){
         new_input = {'t_hash': [transaction_hash], 'quantity': quantity};
         if (new_id){
-            new_input.id == new_id;
+            new_input.id = new_id;
             //TODO
             //Registrar nuevo id en tabla de bd
         }
