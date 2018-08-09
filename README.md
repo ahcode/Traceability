@@ -3,5 +3,5 @@
 *En Desarrollo*
 
 - Server: NodeJs, Express, PostgreSQL
-- Web: Angular?
+- Web: Django
 - Client: Custom Python library using Requests
