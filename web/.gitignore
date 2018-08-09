@@ -1,3 +1,7 @@
+#Visual Studio Code files
+.vscode/
+*.code-workspace
+
 # Created by https://www.gitignore.io
 
 ### OSX ###
