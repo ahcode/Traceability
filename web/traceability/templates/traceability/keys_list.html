@@ -7,7 +7,7 @@
     <a class="nav-link active" href="#">Activas</a>
     </li>
     <li class="nav-item">
-    <a class="nav-link" href="#">Pendientes</a>
+    <a class="nav-link" href="#">Pendientes {% if pending_keys > 0 %} <span class="badge badge-pill badge-danger">{{ pending_keys }}</span>{% endif %}</a>
     </li>
     <li class="nav-item">
     <a class="nav-link" href="#">Desactivadas</a>
