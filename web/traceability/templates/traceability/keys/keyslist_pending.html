@@ -6,7 +6,7 @@
     <tr>
         <td class="align-middle">{{ k.name }}</td>
         <td class="align-middle">{{ k.hash }}</td>
-        <td class="align-middle"><a href="#" class="btn btn-info" role="button">Detalles</a> <a href="#" class="btn btn-success" role="button">Activar</a> <a href="#" class="btn btn-danger" role="button">Eliminar</a></td>
+        <td class="align-middle"><a href="#" class="btn btn-info" role="button">Detalles</a> <a href="{% url 'activate_key' hash=k.hash %}" class="btn btn-success" role="button">Activar</a> <a href="{% url 'remove_key' hash=k.hash %}" class="btn btn-danger" role="button">Eliminar</a></td>
     </tr>
 {% empty %}
     <tr><td colspan="3">No hay claves pendientes de activar.</td></tr>

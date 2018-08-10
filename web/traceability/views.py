@@ -1,5 +1,7 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView, ListView
+#from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
+from django.views.generic import View, TemplateView, ListView
+from django.contrib import messages
 from .models import *
 
 # Create your views here.
@@ -23,3 +25,35 @@ class InactiveKeysList(ListView):
     template_name = 'traceability/keys/keyslist_inactive.html'
     queryset = Key.objects.filter(current_status = 'inactive')
     context_object_name = 'keys_list'
+
+def ActivateKey(request, hash):
+    try:
+        k = Key.objects.get(hash = hash)
+        k.current_status = 'active'
+        k.save()
+        messages.add_message(request, messages.SUCCESS, "La clave '" + k.name + "' se ha activado correctamente.")
+    except ObjectDoesNotExist:
+        messages.add_message(request, messages.ERROR, "No se ha encontrado la clave.")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+def DeactivateKey(request, hash):
+    try:
+        k = Key.objects.get(hash = hash)
+        k.current_status = 'inactive'
+        k.save()
+        messages.add_message(request, messages.SUCCESS, "La clave '" + k.name + "' se ha desactivado correctamente.")
+    except ObjectDoesNotExist:
+        messages.add_message(request, messages.ERROR, "No se ha encontrado la clave.")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+def RemoveKey(request, hash):
+    try:
+        k = Key.objects.get(hash = hash)
+        if k.current_status != 'new':
+            messages.add_message(request, messages.ERROR, "No se pueden eliminar claves que ya han sido activadas.")
+        else:
+            k.delete()
+            messages.add_message(request, messages.SUCCESS, "La clave '" + k.name + "' se ha eliminado correctamente.")
+    except ObjectDoesNotExist:
+        messages.add_message(request, messages.ERROR, "No se ha encontrado la clave.")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
