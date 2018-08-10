@@ -1,6 +1,6 @@
 #from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
-from django.views.generic import View, TemplateView, ListView
+from django.views.generic import View, TemplateView, ListView, DetailView
 from django.contrib import messages
 from .models import *
 
@@ -25,6 +25,13 @@ class InactiveKeysList(ListView):
     template_name = 'traceability/keys/keyslist_inactive.html'
     queryset = Key.objects.filter(current_status = 'inactive')
     context_object_name = 'keys_list'
+
+class KeyDetails(DetailView):
+    model = Key
+    template_name = 'traceability/keys/key_details.html'
+    slug_url_kwarg = 'hash'
+    slug_field = 'hash'
+    context_object_name = 'key'
 
 def ActivateKey(request, hash):
     try:
