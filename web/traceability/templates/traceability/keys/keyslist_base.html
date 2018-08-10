@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block nav-stages %}active{% endblock %}
+{% block content %}
+<h3 class="mt-3">Gestión de Claves</h3>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+    <a class="nav-link {% block tab-active %}{% endblock %}" href="{% url 'keys' %}">Activas</a>
+    </li>
+    <li class="nav-item">
+    <a class="nav-link {% block tab-pending %}{% endblock %}" href="{% url 'keys_new' %}">Pendientes {% if pending_keys > 0 %} <span class="badge badge-pill badge-danger">{{ pending_keys }}</span>{% endif %}</a>
+    </li>
+    <li class="nav-item">
+    <a class="nav-link {% block tab-inactive %}{% endblock %}" href="{% url 'keys_inactive' %}">Desactivadas</a>
+    </li>
+</ul>
+<p class="mt-3">{% block list-text %}{% endblock %}</p>
+<div class="table-responsive">
+<table class = "table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Hash</th>
+            <th>Opciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% block list %}{% endblock %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

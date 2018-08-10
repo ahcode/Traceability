@@ -4,7 +4,8 @@ from django.db import models
 class Key(models.Model):
     hash = models.CharField(max_length=64, primary_key=True)
     public_key = models.TextField(max_length=300)
-    active = models.BooleanField(default = False)
+    status_choices = (('active', 'Active'), ('inactive', 'Inactive'), ('new', 'New'))
+    current_status = models.CharField(max_length=8, choices=status_choices, default='new')
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=300)
 

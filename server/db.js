@@ -43,7 +43,7 @@ module.exports.newtransaction = function(transaction){
 }
 
 module.exports.getpk = function(key_hash){
-    query = "SELECT public_key FROM keys WHERE hash = '" + key_hash + "' AND active = true;"
+    query = "SELECT public_key FROM keys WHERE hash = '" + key_hash + "' AND current_status = 'active';"
     return new Promise((suc, rej) => {
         pool.query(query, (err, res) => {
             if (err){

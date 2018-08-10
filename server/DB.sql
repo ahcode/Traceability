@@ -1,7 +1,9 @@
+CREATE TYPE status AS ENUM ('active', 'inactive', 'new');
+
 CREATE TABLE keys(
 	hash char(64) PRIMARY KEY NOT NULL,
 	public_key varchar(300) NOT NULL,
-	active boolean DEFAULT FALSE NOT NULL,
+	current_status status DEFAULT 'new' NOT NULL,
 	name varchar(50) NOT NULL,
 	description varchar(300)
 );
@@ -36,5 +38,5 @@ CREATE TABLE t_inputs(
 CREATE TABLE product_id(
 	id varchar(64) PRIMARY KEY NOT NULL,
 	first_transaction char(64) REFERENCES transactions NOT NULL,
-	last_transaction char(64) REFERENCES transactions NOT NULL,
+	last_transaction char(64) REFERENCES transactions NOT NULL
 );

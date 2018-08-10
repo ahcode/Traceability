@@ -1,0 +1,14 @@
+{% extends 'traceability/keys/keyslist_base.html' %}
+{% block tab-pending %}active{% endblock %}
+{% block list-text %}En esta lista se muestran las claves que aún no han sido verificadas por un administrador. Las transacciones recibidas firmadas con estas claves serán ignoradas.{% endblock %}
+{% block list %}
+{% for k in keys_list %}
+    <tr>
+        <td class="align-middle">{{ k.name }}</td>
+        <td class="align-middle">{{ k.hash }}</td>
+        <td class="align-middle"><a href="#" class="btn btn-info" role="button">Detalles</a> <a href="#" class="btn btn-success" role="button">Activar</a> <a href="#" class="btn btn-danger" role="button">Eliminar</a></td>
+    </tr>
+{% empty %}
+    <tr><td colspan="3">No hay claves pendientes de activar.</td></tr>
+{% endfor %}
+{% endblock %}
