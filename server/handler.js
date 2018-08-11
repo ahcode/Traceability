@@ -2,6 +2,7 @@ var router = require('express').Router();
 var db = require('./db.js');
 var crypto = require('./cryptography.js');
 var utils = require('./utils.js');
+var qr = require('qr-image');
 
 router.post('/register', function(req, res) {
     if (true){ //FALTA COMPROBAR SI EL REGISTRO ESTÁ ABIERTO
@@ -34,6 +35,12 @@ router.post('/newtransaction', function(req, res) {
             res.send(msg);
         });
     }
+});
+
+router.get('/qr', function(req, res) {
+    var qr_png = qr.image('http://www.google.es/');
+    res.contentType('image/png');
+    qr_png.pipe(res);
 });
 
 module.exports.router = router;
