@@ -1,6 +1,6 @@
-#from django.shortcuts import redirect
+from django.urls import reverse
 from django.http import HttpResponseRedirect
-from django.views.generic import View, TemplateView, ListView, DetailView
+from django.views.generic import View, TemplateView, ListView, DetailView, CreateView
 from django.contrib import messages
 from .models import *
 
@@ -64,3 +64,11 @@ def RemoveKey(request, hash):
     except ObjectDoesNotExist:
         messages.add_message(request, messages.ERROR, "No se ha encontrado la clave.")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+class NewKey(CreateView):
+    model = Key
+    fields = ['name', 'public_key', 'current_status', 'description']
+    template_name = "traceability/keys/key_form.html"
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, "Se ha registrado la nueva clave.")
+        return super().form_valid(form)

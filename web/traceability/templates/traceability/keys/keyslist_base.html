@@ -7,7 +7,7 @@
     <a class="nav-link {% block tab-active %}{% endblock %}" href="{% url 'keys' %}">Activas</a>
     </li>
     <li class="nav-item">
-    <a class="nav-link {% block tab-pending %}{% endblock %}" href="{% url 'keys_new' %}">Pendientes {% if pending_keys > 0 %} <span class="badge badge-pill badge-danger">{{ pending_keys }}</span>{% endif %}</a>
+    <a class="nav-link {% block tab-pending %}{% endblock %}" href="{% url 'keys_pending' %}">Pendientes {% if pending_keys > 0 %} <span class="badge badge-pill badge-danger">{{ pending_keys }}</span>{% endif %}</a>
     </li>
     <li class="nav-item">
     <a class="nav-link {% block tab-inactive %}{% endblock %}" href="{% url 'keys_inactive' %}">Desactivadas</a>
@@ -27,5 +27,6 @@
     {% block list %}{% endblock %}
     </tbody>
 </table>
+<a href="{% url 'new_key' %}" class="float-left mt-5 btn btn-primary">Nueva Clave</a>
 </div>
 {% endblock %}
