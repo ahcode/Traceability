@@ -72,3 +72,19 @@ class NewKey(CreateView):
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, "Se ha registrado la nueva clave.")
         return super().form_valid(form)
+
+def KeySearch(request):
+    searchbox = request.GET.get('sb')
+    if searchbox:
+        if Key.objects.filter(hash = searchbox).exists():
+            url = reverse('key_details', kwargs={'hash': searchbox})
+        else:
+            k = Key.objects.filter(name = searchbox)
+            if k.exists():
+                url = reverse('key_details', kwargs={'hash': k[0].hash})
+            else:
+                messages.add_message(request, messages.ERROR, "No se ha encontrado la clave.")
+                url = reverse('keys')
+    else:
+        url = reverse('keys')
+    return HttpResponseRedirect(url)

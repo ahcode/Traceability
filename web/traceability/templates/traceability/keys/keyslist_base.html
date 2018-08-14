@@ -12,7 +12,16 @@
     <li class="nav-item">
     <a class="nav-link {% block tab-inactive %}{% endblock %}" href="{% url 'keys_inactive' %}">Desactivadas</a>
     </li>
+    <li class="nav-item"></li>
+    <form class="form-inline ml-auto" action="{% url 'key_search' %}" method="get">
+        <input class="form-control mr-2" required type="text" name="sb" placeholder="Nombre o Hash">
+        <button class="btn btn-success" type="submit">Buscar</button>
+    </form>
+    </li>
 </ul>
+<div>
+    
+</div>
 <p class="mt-3">{% block list-text %}{% endblock %}</p>
 <div class="table-responsive">
 <table class = "table table-striped">
@@ -27,6 +36,6 @@
     {% block list %}{% endblock %}
     </tbody>
 </table>
-<a href="{% url 'new_key' %}" class="float-left mt-5 btn btn-primary">Nueva Clave</a>
 </div>
+<a href="{% url 'new_key' %}" class="float-left mt-5 btn btn-primary">Nueva Clave</a>
 {% endblock %}
