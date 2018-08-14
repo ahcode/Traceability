@@ -10,7 +10,7 @@
     <a class="nav-link {% block tab-pending %}{% endblock %}" href="{% url 'keys_pending' %}">Pendientes {% if pending_keys > 0 %} <span class="badge badge-pill badge-danger">{{ pending_keys }}</span>{% endif %}</a>
     </li>
     <li class="nav-item">
-    <a class="nav-link {% block tab-inactive %}{% endblock %}" href="{% url 'keys_inactive' %}">Desactivadas</a>
+    <a class="nav-link {% block tab-inactive %}{% endblock %}" href="{% url 'keys_inactive' %}">Inactivas</a>
     </li>
     <li class="nav-item"></li>
     <form class="form-inline ml-auto" action="{% url 'key_search' %}" method="get">

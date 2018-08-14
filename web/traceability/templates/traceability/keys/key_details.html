@@ -9,4 +9,14 @@
 <tr><td class = "text-left"><span class="font-weight-bold text-left">Descripción:</span></td><td>{% if key.description %}{{ key.description }}{% else %}<span class="font-weight-light">No hay descripción</span>{% endif %}</td></tr>
 <tr><td class = "text-left"><span class="font-weight-bold text-left">Estado:</span></td><td><div class="text-center alert alert-{% if key.current_status == 'active' %}success{% elif key.current_status == 'new' %}warning{% else %}danger{% endif %}">{{ key.get_current_status_display }}</div></td></tr>
 </table>
+<a href="{% url 'modify_key' hash=key.hash %}" class="btn btn-primary">Modificar</a>
+{% if key.current_status != 'active' %}
+<a href="{% url 'activate_key' hash=key.hash %}" class="btn btn-success" role="button">Activar</a>
+{% endif %}
+{% if key.current_status == 'active' %}
+<a href="{% url 'deactivate_key' hash=key.hash %}" class="btn btn-danger" role="button">Desactivar</a>
+{% endif %}
+{% if key.current_status == 'new' %}
+<a href="{% url 'remove_key' hash=key.hash %}" class="btn btn-danger" role="button">Eliminar</a>
+{% endif %}
 {% endblock %}

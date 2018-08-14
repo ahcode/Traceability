@@ -1,8 +1,10 @@
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from django.views.generic import View, TemplateView, ListView, DetailView, CreateView
+from django.views.generic import View, TemplateView, ListView, DetailView, CreateView, UpdateView
 from django.contrib import messages
 from .models import *
+from django.http import Http404
 
 # Create your views here.
 class Index(TemplateView):
@@ -32,6 +34,13 @@ class KeyDetails(DetailView):
     slug_url_kwarg = 'hash'
     slug_field = 'hash'
     context_object_name = 'key'
+    def get(self, request, *args, **kwargs):
+        try:
+            self.object = self.get_object()
+        except Http404:
+            return redirect('keys')
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
 def ActivateKey(request, hash):
     try:
@@ -71,6 +80,16 @@ class NewKey(CreateView):
     template_name = "traceability/keys/key_form.html"
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, "Se ha registrado la nueva clave.")
+        return super().form_valid(form)
+
+class ModifyKey(UpdateView):
+    model = Key
+    fields = ['name', 'current_status', 'description']
+    template_name = "traceability/keys/key_form.html"
+    slug_url_kwarg = 'hash'
+    slug_field = 'hash'
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, "Se ha actualizado la información.")
         return super().form_valid(form)
 
 def KeySearch(request):
