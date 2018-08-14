@@ -84,7 +84,7 @@ class NewKey(CreateView):
 
 class ModifyKey(UpdateView):
     model = Key
-    fields = ['name', 'current_status', 'description']
+    fields = ['name', 'description']
     template_name = "traceability/keys/key_form.html"
     slug_url_kwarg = 'hash'
     slug_field = 'hash'
