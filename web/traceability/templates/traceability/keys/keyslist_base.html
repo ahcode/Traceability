@@ -37,5 +37,14 @@
     </tbody>
 </table>
 </div>
-<a href="{% url 'new_key' %}" class="float-left mt-5 btn btn-primary">Nueva Clave</a>
+<a href="{% url 'new_key' %}" class="float-right mt-2 btn btn-primary">Nueva Clave</a>
+{% if is_paginated %}
+<ul class="pagination mt-2 float-left">
+  <li class="page-item{% if not page_obj.has_previous %} disabled{% endif %}"><a class="page-link" href="?page=1">&lt;&lt;</a></li>
+  <li class="page-item{% if not page_obj.has_previous %} disabled{% endif %}"><a class="page-link" href="?page={% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% endif %}">&lt;</a></li>
+  <li class="page-item active"><a class="page-link" href="#">{{page_obj.number}} de {{page_obj.paginator.num_pages}}</a></li>
+  <li class="page-item{% if not page_obj.has_next %} disabled{% endif %}"><a class="page-link" href="?page={% if page_obj.has_next %}{{ page_obj.next_page_number }}{% endif %}">&gt;</a></li>
+  <li class="page-item{% if not page_obj.has_next %} disabled{% endif %}"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&gt;&gt;</a></li>
+  </ul>
+{% endif %}
 {% endblock %}

@@ -15,18 +15,21 @@ class ActiveKeysList(ListView):
     template_name = 'traceability/keys/keyslist_active.html'
     queryset = Key.objects.filter(current_status = 'active')
     context_object_name = 'keys_list'
+    paginate_by = 10
 
 class PendingKeysList(ListView):
     model = Key
     template_name = 'traceability/keys/keyslist_pending.html'
     queryset = Key.objects.filter(current_status = 'new')
     context_object_name = 'keys_list'
+    paginate_by = 10
 
 class InactiveKeysList(ListView):
     model = Key
     template_name = 'traceability/keys/keyslist_inactive.html'
     queryset = Key.objects.filter(current_status = 'inactive')
     context_object_name = 'keys_list'
+    paginate_by = 10
 
 class KeyDetails(DetailView):
     model = Key
