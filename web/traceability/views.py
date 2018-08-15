@@ -110,3 +110,13 @@ def KeySearch(request):
     else:
         url = reverse('keys')
     return HttpResponseRedirect(url)
+
+class TransactionsList(ListView):
+    model = Transaction
+    template_name = 'traceability/transactions/transactions_list.html'
+    context_object_name = 'transactions_list'
+    paginate_by = 10
+
+    def get_queryset(self):
+        q = super().get_queryset()
+        return q
