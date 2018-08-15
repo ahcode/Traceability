@@ -16,10 +16,10 @@
             
         {% for t in transactions_list %}
         <tr>
-        <td>{{ t.hash|slice:"9" }}</td>
+        <td><a href="#">{{ t.hash|slice:"9" }}</a></td>
         <td>{{ t.client_timestamp|date:'d/m/y H:i' }}</td>
-        <td>{{ t.transmitter }}</td>
-        <td>{% if t.receiver %}{{ t.receiver }}{% elif t.mode != 1 %}{{ t.transmitter }}{% else %}-{% endif %}</td>
+        <td><a href="{% url 'key_details' t.transmitter.hash %}">{{ t.transmitter }}</a></td>
+        <td>{% if t.receiver %}<a href="{% url 'key_details' t.receiver.hash %}">{{ t.receiver }}</a>{% elif t.mode != 1 %}<a href="{% url 'key_details' t.transmitter.hash %}">{{ t.transmitter }}</a>{% else %}-{% endif %}</td>
         </tr>
         {% endfor %}
     </tbody>
