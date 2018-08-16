@@ -120,3 +120,41 @@ class TransactionsList(ListView):
     def get_queryset(self):
         q = super().get_queryset()
         return q
+
+class TransactionDetail(DetailView):
+    model = Transaction
+    template_name = 'traceability/transactions/transaction_details.html'
+    context_object_name = 't'
+    slug_url_kwarg = 'hash'
+    slug_field = 'hash'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if context[self.context_object_name]:
+            obj = context[self.context_object_name]
+            context['sign'] = obj.verify_sign()
+            if 'product' in obj.transaction_data:
+                self.set_quantity(obj.transaction_data['product'], obj.updated_quantity)
+                self.set_pre_transactions(obj.transaction_data['product'], obj.hash)
+                self.set_post_transactions(obj.transaction_data['product'], obj.hash)
+            else:
+                self.set_quantity(obj.transaction_data['product_in'], obj.updated_quantity)
+                self.set_pre_transactions(obj.transaction_data['product_in'], obj.hash)
+                self.set_post_transactions(obj.transaction_data['product_out'], obj.hash)
+
+        return context
+
+    def set_quantity(self, p_list, updated_quantity):
+        for p in p_list:
+            if p[1] == None:
+                p[1] = updated_quantity[p[0]]
+
+    def set_pre_transactions(self, p_list, hash):
+        for p in p_list:
+            in_list = list(TransactionInput.objects.filter(t_hash = hash, product = p[0]).values_list('input', flat=True))
+            p.append(in_list)
+
+    def set_post_transactions(self, p_list, hash):
+        for p in p_list:
+            out_list = list(TransactionInput.objects.filter(input = hash, product = p[0]).values_list('t_hash', flat=True))
+            p.append(out_list)

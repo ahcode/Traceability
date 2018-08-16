@@ -14,4 +14,5 @@ urlpatterns = [
     path('key/modify/<slug:hash>', views.ModifyKey.as_view(), name='modify_key'),
     path('key/search/', views.KeySearch, name='key_search'),
     path('transactions/', views.TransactionsList.as_view(), name='transactions'),
+    path('transactions/<slug:hash>', views.TransactionDetail.as_view(), name='transaction_details'),
 ]
