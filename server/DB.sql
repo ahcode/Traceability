@@ -32,7 +32,7 @@ CREATE TABLE t_inputs(
 	t_hash char(64) REFERENCES transactions NOT NULL,
 	input char(64) REFERENCES transactions NOT NULL,
 	product varchar(64) NOT NULL,
-	PRIMARY KEY(t_hash, product)
+	PRIMARY KEY(t_hash, input, product)
 );
 
 CREATE TABLE product_id(

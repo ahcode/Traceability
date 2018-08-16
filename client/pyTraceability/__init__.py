@@ -29,7 +29,7 @@ class Connection():
         transaction = [("type", transaction_type), ("mode", mode), ("transmitter", transmitter)]
         if(receiver):
             transaction.append(("receiver", receiver))
-        transaction.extend([("timestamp", int(time())), ("data", ordered_data)])
+        transaction.extend([("timestamp", time()), ("data", ordered_data)])
         transaction = OrderedDict(transaction)
         serialized_transaction = json.dumps(transaction, separators = (',',':'))
         sign = self.key.get_sign(serialized_transaction)
