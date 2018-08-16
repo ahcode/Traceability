@@ -21,12 +21,13 @@ module.exports.checktransactionformat = function(json){
     if (!json.hasOwnProperty("transmitter") || typeof json.transmitter != 'string'){
         return {'correct' : false, 'msg' : "transmitter must be an string"}
     }
-    if (!json.hasOwnProperty("timestamp") || typeof json.timestamp != 'number'){
+    if (!json.hasOwnProperty("timestamp") || typeof json.timestamp != 'string'){
         return {'correct' : false, 'msg' : "timstamp must be an integer"}
     }
     var now = parseInt((new Date()).getTime() / 1000);
-    if (json.timestamp > now + config.seconds_threshold ||
-        json.timestamp < now - config.max_seconds_delay){
+    var timestamp = parseFloat(json.timestamp);
+    if (timestamp > now + config.seconds_threshold ||
+        timestamp < now - config.max_seconds_delay){
         return {'correct' : false, 'msg' : "timestamp is different from the server time"}
     }
     if (!json.hasOwnProperty("data") || typeof json.data != 'object'){

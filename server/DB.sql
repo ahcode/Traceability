@@ -16,6 +16,7 @@ CREATE TABLE transactions(
 	receiver char(64) REFERENCES keys,
 	server_timestamp timestamp DEFAULT NOW() NOT NULL,
 	client_timestamp timestamp NOT NULL,
+	raw_client_timestamp varchar(24) NOT NULL,
 	transaction_data json NOT NULL,
 	sign char(256) NOT NULL,
 	updated_quantity json DEFAULT NULL
