@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block nav-transactions %}active{% endblock %}
+{% block content %}
+<h3 class="mt-3 mb-4">Transacciones</h3>
+<div class="text-left" style="max-width: 700px; margin: auto">
+<p><b>Hash:</b> {{ t.hash }}</p>
+<p><b>Transmisor:</b> <a href="{% url 'key_details' t.transmitter.hash %}">{{ t.transmitter }}</a></p>
+{% if t.receiver %}<p><b>Receptor:</b> <a href="{% url 'key_details' t.receiver.hash %}">{{ t.receiver }}</a></p>{% endif %}
+{% if t.transaction_data.product %}
+<p><b>Productos:</b></p>
+<div id="accordion" class="mt-3 mb-3">
+{% for p in t.transaction_data.product %}
+    <div class="card text-center">
+        <div class="card-header">
+            <a class="card-link" data-toggle="collapse" href="#collapse-{{ forloop.counter }}">{{ p.0 }} - {{ p.1 }}</a>
+        </div>
+        <div id="collapse-{{ forloop.counter }}" class="collapse" data-parent="#accordion">
+            <div class="card-body">
+                <div class="row">{% if t.type != 0 %}<div class="col">
+                    <p><b>Transacciones Anteriores:</b></p>
+                {% if p.2 %}
+                {% for h in p.2 %}
+                    <p><a href="{% url 'transaction_details' h %}">{{ h|slice:"9" }}</a></p>
+                {% endfor %}
+                {% else %}<span class="font-weight-light">No hay transacciones anteriores.</span>{% endif %}
+                </div>{% endif %}{% if t.type != 1 %}<div class="col">
+                    <p><b>Transacciones Siguiente:</b></p>
+                {% if p.3 %}
+                {% for h in p.3 %}
+                    <p><a href="{% url 'transaction_details' h %}">{{ h|slice:"9" }}</a></p>
+                {% endfor %}
+                {% else %}<span class="font-weight-light">Aún no hay transacciones siguientes.</span>{% endif %}
+                </div>{% endif %}</div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+{% else %}
+<p><b>Productos de Entrada:</b></p>
+<div id="accordion" class="mt-3 mb-3">
+{% for p in t.transaction_data.product_in %}
+    <div class="card text-center">
+        <div class="card-header">
+            <a class="card-link" data-toggle="collapse" href="#collapse-in-{{ forloop.counter }}">{{ p.0 }} - {{ p.1 }}</a>
+        </div>
+        <div id="collapse-in-{{ forloop.counter }}" class="collapse" data-parent="#accordion">
+            <div class="card-body">
+                <div class="row"><div class="col">
+                    <p><b>Transacciones Anteriores:</b></p>
+                {% if p.2 %}
+                {% for h in p.2 %}
+                    <p><a href="{% url 'transaction_details' h %}">{{ h|slice:"9" }}</a></p>
+                {% endfor %}
+                {% else %}<span class="font-weight-light">No hay transacciones anteriores.</span>{% endif %}
+                </div></div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+<p><b>Productos de Salida:</b></p>
+<div id="accordion" class="mt-3 mb-3">
+{% for p in t.transaction_data.product_out %}
+    <div class="card text-center">
+        <div class="card-header">
+            <a class="card-link" data-toggle="collapse" href="#collapse-out-{{ forloop.counter }}">{{ p.0 }} - {{ p.1 }}</a>
+        </div>
+        <div id="collapse-out-{{ forloop.counter }}" class="collapse" data-parent="#accordion">
+            <div class="card-body">
+                <div class="row"><div class="col">
+                    <p><b>Transacciones Siguiente:</b></p>
+                {% if p.2 %}
+                {% for h in p.2 %}
+                    <p><a href="{% url 'transaction_details' h %}">{{ h|slice:"9" }}</a></p>
+                {% endfor %}
+                {% else %}<span class="font-weight-light">Aún no hay transacciones siguientes.</span>{% endif %}
+                </div></div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+{% endif %}
+{% for key, value in t.transaction_data.items %}
+    {% if key != 'product' and key != 'product_in' and key != 'product_out' %}
+    <p><b>{{ key }}:</b> {{ value }}</p>
+    {% endif %}
+{% endfor %}
+{% if sign %}
+<div class="text-center alert alert-success mt-5">Firma Verificada</div>
+{% else %}
+<div class="text-center alert alert-danger mt-5">Error de Firma</div>
+{% endif %}
+</div>
+{% endblock %}
