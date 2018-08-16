@@ -9,11 +9,10 @@ class Connection():
     Sus métodos permiten comunicarse con el servidor de forma sencilla
     y realizar todo tipo de transacciones."""
 
-    def __init__(self, keyfile: str):
+    def __init__(self, key: Key):
         """Inicializa la conexión. Comprueba la conexión con el servidor así como la validez
         de la clave de la etapa."""
-        self.key = Key(keyfile)
-
+        self.key = key
         self.__apicheck()
 
     def __apicheck(self):
