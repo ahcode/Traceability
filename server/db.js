@@ -136,13 +136,25 @@ module.exports.set_quantity = function(transaction, product, quantity){
 }
 
 module.exports.update_product_id = function(id, key, transaction_hash, product, new_owner=null, destination=null){
-    query = "UPDATE product_id SET last_transaction = $1, owner = $2, destination = $3 WHERE id = $4 AND product = $5 AND owner = $6";
-    values = [transaction_hash, new_owner, destination, id, product, key];
+    query = "SELECT last_transaction FROM product_id WHERE id = $1 AND product = $2 AND owner = $3";
+    values = [id, product, key];
     pool.query(query, values, (err, res) => {
         if (err){
             console.log("DATABASE ERROR");
+        }else{
+            query = "UPDATE product_id SET last_transaction = $1, owner = $2, destination = $3 WHERE id = $4 AND product = $5 AND owner = $6";
+            values = [transaction_hash, new_owner, destination, id, product, key];
+            if(res.rowCount == 1){
+                pool.query(query, values, (err, res) => {
+                    if (err){
+                        console.log("DATABASE ERROR");
+                    }
+                });
+                module.exports.set_inputs(transaction_hash, [res.rows[0].last_transaction], product);
+            }
         }
     });
+    
 }
 
 module.exports.new_id = function(id, key, transaction_hash, product){
