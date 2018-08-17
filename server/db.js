@@ -166,3 +166,19 @@ module.exports.new_id = function(id, key, transaction_hash, product){
         }
     });
 }
+
+module.exports.check_key = function(keyhash){
+    query = "SELECT FROM keys WHERE current_status='active' AND hash=$1";
+    return new Promise((suc, rej) => {
+        pool.query(query, [keyhash], (err, res) => {
+                if (err){
+                    console.log("DATABASE ERROR");
+                }else if(res.rowCount == 0){
+                    rej();
+                }else{
+                    suc();
+                }
+            }
+        );
+    });
+}

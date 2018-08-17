@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pyTraceability.keys import Key
+from pyTraceability import Key
 import os
 import sys
 
