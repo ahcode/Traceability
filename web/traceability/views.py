@@ -133,28 +133,46 @@ class TransactionDetail(DetailView):
         if context[self.context_object_name]:
             obj = context[self.context_object_name]
             context['sign'] = obj.verify_sign()
+            if 'new_id' in obj.transaction_data: newid = obj.transaction_data['new_id']
+            else: newid = None
             if 'product' in obj.transaction_data:
-                self.set_quantity(obj.transaction_data['product'], obj.updated_quantity)
-                self.set_pre_transactions(obj.transaction_data['product'], obj.hash)
-                self.set_post_transactions(obj.transaction_data['product'], obj.hash)
+                context['product'] = self.make_product_list(obj.transaction_data['product'], newid)
+                self.set_quantity(context['product'], obj.updated_quantity)
+                self.set_pre_transactions(context['product'], obj.hash)
+                self.set_post_transactions(context['product'], obj.hash)
             else:
-                self.set_quantity(obj.transaction_data['product_in'], obj.updated_quantity)
-                self.set_pre_transactions(obj.transaction_data['product_in'], obj.hash)
-                self.set_post_transactions(obj.transaction_data['product_out'], obj.hash)
+                context['product_in'] = self.make_product_list(obj.transaction_data['product_in'])
+                context['product_out'] = self.make_product_list(obj.transaction_data['product_out'], newid)
+                self.set_quantity(context['product_in'], obj.updated_quantity)
+                self.set_pre_transactions(context['product_in'], obj.hash)
+                self.set_post_transactions(context['product_out'], obj.hash)
 
         return context
 
+    def make_product_list(self, p_list, newid = None):
+        l = []
+        for p in p_list:
+            l.append({})
+            l[-1]['product'] = p[0]
+            if newid:
+                l[-1]['newid'] = newid
+            elif isinstance(p[1], str):
+                l[-1]['id'] = p[1]
+            else:
+                l[-1]['quantity'] = p[1]
+        return l
+
     def set_quantity(self, p_list, updated_quantity):
         for p in p_list:
-            if p[1] == None:
-                p[1] = updated_quantity[p[0]]
+            if 'quantity' in p and p['quantity'] == None:
+                p['quantity'] = updated_quantity[p['product']]
 
     def set_pre_transactions(self, p_list, hash):
         for p in p_list:
-            in_list = list(TransactionInput.objects.filter(t_hash = hash, product = p[0]).values_list('input', flat=True))
-            p.append(in_list)
+            in_list = list(TransactionInput.objects.filter(t_hash = hash, product = p['product']).values_list('input', flat=True))
+            p['pre'] = in_list
 
     def set_post_transactions(self, p_list, hash):
         for p in p_list:
-            out_list = list(TransactionInput.objects.filter(input = hash, product = p[0]).values_list('t_hash', flat=True))
-            p.append(out_list)
+            out_list = list(TransactionInput.objects.filter(input = hash, product = p['product']).values_list('t_hash', flat=True))
+            p['post'] = out_list
