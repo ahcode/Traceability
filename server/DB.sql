@@ -38,6 +38,9 @@ CREATE TABLE t_inputs(
 
 CREATE TABLE product_id(
 	id varchar(64) PRIMARY KEY NOT NULL,
+	product varchar(64) NOT NULL,
 	first_transaction char(64) REFERENCES transactions NOT NULL,
-	last_transaction char(64) REFERENCES transactions NOT NULL
+	last_transaction char(64) REFERENCES transactions NOT NULL,
+	owner varchar(64) REFERENCES keys,
+	destination varchar(64)
 );

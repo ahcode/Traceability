@@ -53,8 +53,24 @@ module.exports.update_inputs = function(transaction){
     //Establecer productos de entrada y salida de la transacción
     var p_in, p_out;
     var same_out = false;
-    if (transaction.mode == 3 && transaction.type != 0){
-        return; //TODO
+    var process_in = true;
+    var process_out = true;
+    if (transaction.mode == 3 && transaction.type != 0){ //Transacciones con ID
+        process_in = false; process_out = false;
+        if (transaction.type == 1){
+            p = transaction.data.product[0];
+            db.update_product_id(p[1], transaction.transmitter, transaction.hash, p[0], null, transaction.data.destination)
+        }else{
+            if (transaction.data.hasOwnProperty('product')){
+                p = transaction.data.product[0];
+                db.update_product_id(p[1], transaction.transmitter, transaction.hash, p[0], receiver)
+            }else{
+                p_in = transaction.data.product_in;
+                p_out = transaction.data.product_out;
+                db.update_product_id(p_in[1], transaction.transmitter, transaction.hash, p_in[0])
+                process_out = true;
+            }
+        }
     }else{
         if (transaction.type == 0){
             p_out = transaction.data.product;
@@ -73,27 +89,29 @@ module.exports.update_inputs = function(transaction){
             }
         }
     }
-
     //Eliminar productos utilizados del emisor y localizar transacciones precedentes
-    for (let i = 0; i < p_in.length; i++){
-        process_input(transaction.transmitter, transaction.hash, transaction.mode, p_in[i][0], p_in[i][1])
-        .then(function(quantity){
-            if (same_out && p_out[i][1] == null)
-                process_output(receiver, transaction.hash, p_out[i][0], quantity);
-        });
+    if (process_in){
+        for (let i = 0; i < p_in.length; i++){
+            process_input(transaction.transmitter, transaction.hash, transaction.mode, p_in[i][0], p_in[i][1])
+            .then(function(quantity){
+                if (same_out && p_out[i][1] == null)
+                    process_output(receiver, transaction.hash, p_out[i][0], quantity);
+            });
+        }
     }
 
     //Añadir productos al receptor
-    var new_id = null;
-    for(let i = 0; i < p_out.length; i++){
-        if (p_out[i][1] != null){
-            if (transaction.data.hasOwnProperty('new_id'))
-                new_id = transaction.data.new_id;
-            else
-                new_id = null;
-            process_output(receiver, transaction.hash, p_out[i][0], p_out[i][1], new_id);
+    if (process_out){
+        if (!transaction.data.hasOwnProperty('new_id')){
+            for(let i = 0; i < p_out.length; i++){
+                if (p_out[i][1] != null){
+                    process_output(receiver, transaction.hash, p_out[i][0], p_out[i][1]);
+                }
+            };
+        }else{
+            db.new_id(transaction.data.new_id, receiver, transaction.hash, p_out[0][0])
         }
-    };
+    }
 };
 
 function process_input(key, transaction_hash, mode, product, quantity){
@@ -146,15 +164,10 @@ function process_input(key, transaction_hash, mode, product, quantity){
     });
 }
 
-function process_output(key, transaction_hash, product, quantity, new_id){
+function process_output(key, transaction_hash, product, quantity){
     db.get_available_inputs(key, product)
     .then(function(inputs){
         new_input = {'t_hash': [transaction_hash], 'quantity': quantity};
-        if (new_id){
-            new_input.id = new_id;
-            //TODO
-            //Registrar nuevo id en tabla de bd
-        }
         if(!inputs){
             inputs = [new_input];
             db.new_available_inputs(key, product, inputs);

@@ -127,12 +127,30 @@ module.exports.set_inputs = function(transaction, input_list, product){
 module.exports.set_quantity = function(transaction, product, quantity){
     var obj = {};
     obj[product] = quantity;
-    //obj = JSON.stringify(obj);
     query = "UPDATE transactions SET updated_quantity = CASE WHEN updated_quantity IS NULL THEN $1 ELSE updated_quantity::jsonb || $1 END WHERE hash = $2 ;";
     pool.query(query, [obj, transaction], (err, res) => {
         if (err){
             console.log("DATABASE ERROR");
         }
-    }
-);
+    });
+}
+
+module.exports.update_product_id = function(id, key, transaction_hash, product, new_owner=null, destination=null){
+    query = "UPDATE product_id SET last_transaction = $1, owner = $2, destination = $3 WHERE id = $4 AND product = $5 AND owner = $6";
+    values = [transaction_hash, new_owner, destination, id, product, key];
+    pool.query(query, values, (err, res) => {
+        if (err){
+            console.log("DATABASE ERROR");
+        }
+    });
+}
+
+module.exports.new_id = function(id, key, transaction_hash, product){
+    query = "INSERT INTO product_id (id, product, owner, first_transaction, last_transaction) VALUES ($1, $2, $3, $4, $4)";
+    values = [id, product, key, transaction_hash]
+    pool.query(query, values, (err, res) => {
+        if (err){
+            console.log("DATABASE ERROR");
+        }
+    });
 }
