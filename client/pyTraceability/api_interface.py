@@ -10,7 +10,7 @@ def register_key(key_name,  public_key):
     except:
         raise Exception("Connection error.")
     if (r.status_code != 200):
-        raise Exception("Communication error. Status code: " + r.status_code)
+        raise Exception("Communication error. Status code: " + str(r.status_code))
     if (r.text != 'OK'):
         raise Exception("Communication error. " + r.text)
 

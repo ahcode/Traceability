@@ -1,0 +1,4 @@
+Django==2.1
+psycopg2==2.7.5
+pycryptodome==3.6.4
+django-bootstrap-form==3.4
