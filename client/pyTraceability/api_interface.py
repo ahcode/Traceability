@@ -31,8 +31,8 @@ def check_version():
         raise Exception("Connection error.")
     
     r = json.loads(r.text)
-    if r['version'] != pyTraceability.version:
-        raise Exception("Different version between client and server.")
+    if r['protocol_version'] != pyTraceability.protocol_version:
+        raise Exception("Different protocol version between client and server.")
 
 def check_key(keyhash):
     try:

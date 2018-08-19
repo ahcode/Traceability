@@ -37,8 +37,8 @@ router.post('/newtransaction', function(req, res) {
 });
 
 router.get('/version', function(req, res) {
-    var ver = require('./package.json').version;
-    res.send({'version': ver})
+    var pack = require('./package.json');
+    res.send({'version': pack.version, 'protocol_version': pack.protocol_version})
 });
 
 router.post('/keycheck', function(req, res){
