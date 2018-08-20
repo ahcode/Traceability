@@ -2,10 +2,10 @@ const pg = require('pg');
 const pool = new pg.Pool();
 
 module.exports.newkey = function(name, hash, public_key){
-    query = "INSERT INTO keys (name, hash, public_key) VALUES ('" + name + "', '" + hash + "', '" + public_key + "');"
-    
+    query = "INSERT INTO keys (name, hash, public_key) VALUES ($1, $2, $3);"
+    values = [name, hash, public_key]
     return new Promise((suc, rej) => {
-        pool.query(query, (err, res) => {
+        pool.query(query, values, (err, res) => {
                 if (err){
                     if (err.code == '23505')
                         rej("Duplicated key");
@@ -22,16 +22,10 @@ module.exports.newkey = function(name, hash, public_key){
 
 module.exports.newtransaction = function(transaction){
     var query = "INSERT INTO transactions (hash, type, mode, transmitter, receiver, client_timestamp, raw_client_timestamp, transaction_data, sign) \
-    VALUES ('" + transaction.hash + "', " + transaction.type + ", " + transaction.mode + ", '" + transaction.transmitter + "', ";
-    if (transaction.receiver){
-        query += "'" + transaction.receiver + "', ";
-    }else{
-        query += "NULL, ";
-    }
-    query += "to_timestamp(" + transaction.timestamp + "), '" + transaction.timestamp + "', '" + JSON.stringify(transaction.data, null, 0) + "', '" + transaction.sign + "');"
-    
+    VALUES ($1, $2, $3, $4, $5, to_timestamp($6), '" + transaction.timestamp + "', $7, $8)";
+    values = [transaction.hash, transaction.type, transaction.mode, transaction.transmitter, transaction.receiver? transaction.receiver : null, transaction.timestamp, transaction.data, transaction.sign];
     return new Promise((suc, rej) => {
-        pool.query(query, (err, res) => {
+        pool.query(query, values, (err, res) => {
                 if (err){
                     if (err.code != '23505') //Si la transacción está repetida, no hace nada
                         console.log("DATABASE ERROR");
@@ -43,9 +37,9 @@ module.exports.newtransaction = function(transaction){
 }
 
 module.exports.getpk = function(key_hash){
-    query = "SELECT public_key FROM keys WHERE hash = '" + key_hash + "' AND current_status = 'active';"
+    query = "SELECT public_key FROM keys WHERE hash = $1 AND current_status = 'active';"
     return new Promise((suc, rej) => {
-        pool.query(query, (err, res) => {
+        pool.query(query, [key_hash], (err, res) => {
             if (err){
                 console.log("DATABASE ERROR");
                 rej("Database error.")
@@ -58,14 +52,9 @@ module.exports.getpk = function(key_hash){
 }
 
 module.exports.new_available_inputs = function(key, product, inputs){
-    query = "INSERT INTO available_inputs (key_hash, product, inputs) VALUES ('" + key + "', '" + product + "', ARRAY[";
-    for(i = 0; i < inputs.length; i++){
-        if (i != 0)
-            query += ", ";
-        query += "'" + JSON.stringify(inputs[i], null, 0) + "'";
-    }
-    query += "]::json[]);"
-    pool.query(query, (err, res) => {
+    query = "INSERT INTO available_inputs (key_hash, product, inputs) VALUES ($1, $2, $3)";
+    values = [key, product, inputs];
+    pool.query(query, values, (err, res) => {
             if (err){
                 console.log("DATABASE ERROR");
             }
@@ -74,8 +63,8 @@ module.exports.new_available_inputs = function(key, product, inputs){
 }
 
 module.exports.del_available_inputs = function(key, product){
-    query = "DELETE FROM available_inputs WHERE key_hash = '" + key + "' AND product = '" + product + "';";
-    pool.query(query, (err, res) => {
+    query = "DELETE FROM available_inputs WHERE key_hash = $1 AND product = $2";
+    pool.query(query, values, (err, res) => {
             if (err){
                 console.log("DATABASE ERROR");
             }
@@ -84,9 +73,10 @@ module.exports.del_available_inputs = function(key, product){
 }
 
 module.exports.get_available_inputs = function(key, product){
-    query = "SELECT inputs FROM available_inputs WHERE key_hash = '" + key + "' AND product = '" + product + "';";
+    query = "SELECT inputs FROM available_inputs WHERE key_hash = $1 AND product = $2";
+    values = [key, product];
     return new Promise((suc, rej) => {
-        pool.query(query, (err, res) => {
+        pool.query(query, values, (err, res) => {
             if (err)
                 console.log("DATABASE ERROR");
             else if (res.rowCount == 0)
@@ -98,14 +88,9 @@ module.exports.get_available_inputs = function(key, product){
 }
 
 module.exports.update_available_inputs = function(key, product, inputs){
-    query = "UPDATE available_inputs SET inputs = ARRAY[";
-    for(i = 0; i < inputs.length; i++){
-        if (i != 0)
-            query += ", ";
-        query += "'" + JSON.stringify(inputs[i], null, 0) + "'";
-    }
-    query += "]::json[] WHERE key_hash = '" + key + "' AND product = '" + product + "';";
-    pool.query(query, (err, res) => {
+    query = "UPDATE available_inputs SET inputs = $1 WHERE key_hash = $2 AND product = $3";
+    values = [inputs, key, product]
+    pool.query(query, values, (err, res) => {
             if (err){
                 console.log("DATABASE ERROR");
             }
@@ -115,8 +100,10 @@ module.exports.update_available_inputs = function(key, product, inputs){
 
 module.exports.set_inputs = function(transaction, input_list, product){
     query = "INSERT INTO t_inputs VALUES ($1, $2, $3);";
+    values = [transaction, null, product];
     for(i = 0; i < input_list.length; i++){
-        pool.query(query, [transaction, input_list[i], product], (err, res) => {
+        values[1] = input_list[i];
+        pool.query(query, values, (err, res) => {
             if (err){
                 console.log("DATABASE ERROR");
             }
