@@ -10,10 +10,10 @@ def register_key(key_name,  public_key):
         r = requests.post(API_URL + "/register", json_data)
     except:
         raise Exception("Connection error.")
-    if (r.status_code != 200):
-        raise Exception("Communication error. Status code: " + str(r.status_code))
-    if (r.text != 'OK'):
-        raise Exception("Communication error. " + r.text)
+    
+    r_obj = json.loads(r.text)
+    if r_obj['status'] == 'ERROR':
+        raise Exception("Communication error. " + r_obj['error'])
 
 def send_transaction(transaction):
     try:
@@ -21,8 +21,10 @@ def send_transaction(transaction):
         r = requests.post(API_URL + "/newtransaction", headers = headers, data = transaction)
     except:
         raise Exception("Connection error.")
-    if (r.text != 'OK'):
-        raise Exception("Communication error. " + r.text)
+    
+    r_obj = json.loads(r.text)
+    if r_obj['status'] == 'ERROR':
+        raise Exception("Communication error. " + r_obj['error'])
 
 def check_version():
     try:
@@ -30,8 +32,10 @@ def check_version():
     except:
         raise Exception("Connection error.")
     
-    r = json.loads(r.text)
-    if r['protocol_version'] != pyTraceability.protocol_version:
+    r_obj = json.loads(r.text)
+    if r_obj['status'] == 'ERROR':
+        raise Exception("Error checking server version.")
+    if r_obj['protocol_version'] != pyTraceability.protocol_version:
         raise Exception("Different protocol version between client and server.")
 
 def check_key(keyhash):
@@ -41,6 +45,6 @@ def check_key(keyhash):
     except:
         raise Exception("Connection error.")
 
-    r = json.loads(r.text)
-    if r['status'] == 'ERROR':
-        raise Exception("Error: " + r['error'])
+    r_obj = json.loads(r.text)
+    if r_obj['status'] == 'ERROR':
+        raise Exception("Error: " + r_obj['error'])

@@ -7,38 +7,39 @@ router.post('/register', function(req, res) {
     if (true){ //FALTA COMPROBAR SI EL REGISTRO ESTÁ ABIERTO
         var json = req.body;
         //Comprobar formato del objeto recibido
-        if (!utils.checkregisterformat(json))
-            res.send("Bad format");
+        var fres = utils.checkregisterformat(json)
+        if (fres.error)
+            res.send({'status': 'ERROR', 'error': fres.error});
         else
             //Añadir a la base de datos
             db.newkey(json.name, crypto.create_hash(json.key), json.key)
-            .then(function(){res.send("OK")}, function(msg){res.send(msg)});
+            .then(function(){res.send({'status': 'OK'})}, function(msg){res.send({'status': 'ERROR', 'error': msg})});
     }else{
-        res.send("Server is not accepting new keys");
+        res.send({'status': 'ERROR', 'error': "Server is not accepting new keys"});
     }
 });
 
 router.post('/newtransaction', function(req, res) {
     var json = req.body;
     //Comprobar formato de transacción
-    var format_err = utils.checktransactionformat(json)
-    if (!format_err.correct)
-        res.send("Bad format: " + format_err.msg);
+    var fres = utils.checktransactionformat(json)
+    if (fres.error)
+        res.send({'status': 'ERROR', 'error': "Incorrect format: " + fres.error});
     else{
         //Validar la firma
         crypto.validate_transaction(json).then(function(){
             db.newtransaction(json).then(function(){utils.update_inputs(json)}); //TODO
-            res.send("OK");
+            res.send({'status': 'OK'});
         },
         function(msg){
-            res.send(msg);
+            res.send({'status': 'ERROR', 'error': msg});
         });
     }
 });
 
 router.get('/version', function(req, res) {
     var pack = require('./package.json');
-    res.send({'version': pack.version, 'protocol_version': pack.protocol_version})
+    res.send({'status': 'OK', 'version': pack.version, 'protocol_version': pack.protocol_version})
 });
 
 router.post('/keycheck', function(req, res){
@@ -50,7 +51,7 @@ router.post('/keycheck', function(req, res){
             res.send({'status': 'ERROR', 'error': 'Key is not registered or activated.'});
         });
     }else{
-        res.send({'status': 'ERROR', 'error': 'Bad format'})
+        res.send({'status': 'ERROR', 'error': 'Incorrect format'})
     }
 });
 

@@ -22,7 +22,7 @@ module.exports.validate_transaction = function(json){
             if (correct)
                 suc();
             else
-                rej("Bad Sign");
+                rej("Incorrect sign");
         }, function(msg){ rej(msg); });
     });
 };
