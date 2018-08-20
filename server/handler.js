@@ -26,25 +26,24 @@ router.post('/newtransaction', function(req, res) {
     if (fres.error)
         res.send({'status': 'ERROR', 'error': "Incorrect format: " + fres.error});
     else{
+        var promise = new Promise((s) => {s();});
         //Comprobar que exista el receptor
         if (json.hasOwnProperty('receiver')){
-            var promise = db.check_key(json.receiver);
-        }else{
-            var promise = new Promise((suc) => {suc();});
+            promise = promise.then(function(){ return db.check_key(json.receiver); })
+            .catch(function(){ throw 'Receiver key does not exist or is not active'});
+        }
+        //Comprobar que el nuevo id esté disponible
+        if (json.data.hasOwnProperty('new_id')){
+            promise = promise.then(function(){ return db.check_available_id(json.data.new_id); })
+            .catch(function(){ throw 'New id is duplicated'});
         }
         //Validar la firma
         promise.then(function(){
-            crypto.validate_transaction(json).then(function(){
+            return crypto.validate_transaction(json).then(function(){
                 db.newtransaction(json).then(function(){utils.update_inputs(json)});
                 res.send({'status': 'OK'});
-            },function(msg){
-                //Error de firma
-                res.send({'status': 'ERROR', 'error': msg});
-            })},
-            function(){
-                //Error de receptor
-                res.send({'status': 'ERROR', 'error': 'Receiver does not exist or is not active'});
             });
+        }).catch(function(msg){res.send({'status': 'ERROR', 'error': msg})});
     }
 });
 
