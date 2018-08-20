@@ -9,6 +9,7 @@
 		* PGPASSWORD
 		* PGDATABASE
 		* PGPORT
+		* REMOTE_CONFIG_KEY
 
 * Web: Django, PostgreSQL
 	* Env Vars:

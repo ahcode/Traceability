@@ -1,4 +1,5 @@
 {
-    "max_seconds_delay": 240,
-    "seconds_threshold": 5
+    "register_opened": true,
+    "max_seconds_delay": 50,
+    "seconds_threshold": 10
 }

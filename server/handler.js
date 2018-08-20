@@ -61,7 +61,40 @@ router.post('/keycheck', function(req, res){
             res.send({'status': 'ERROR', 'error': 'Key is not registered or activated.'});
         });
     }else{
-        res.send({'status': 'ERROR', 'error': 'Incorrect format'})
+        res.send({'status': 'ERROR', 'error': 'Incorrect format'});
+    }
+});
+
+router.post('/get_variable', function(req, res){
+    json = req.body;
+    if(json.hasOwnProperty('config_key') && json.config_key == process.env.REMOTE_CONFIG_KEY){
+        if(json.hasOwnProperty('name')){
+            try{
+                var v = utils.get_config_variable(json.name);
+                res.send({'status': 'OK', 'value': v});
+            }catch(err){
+                if (err == 'DoesNotExist')
+                    res.send({'status': 'ERROR', 'error': 'variable does not exist'});
+            }
+        }else{
+            res.send({'status': 'ERROR', 'error': 'variable name is required'});
+        }
+    }else{
+        res.send({'status': 'ERROR', 'error': 'config_key is not correct'});
+    }
+});
+
+router.post('/set_variable', function(req, res){
+    json = req.body;
+    if(json.hasOwnProperty('config_key') && json.config_key == process.env.REMOTE_CONFIG_KEY){
+        if(json.hasOwnProperty('name') && json.hasOwnProperty('value')){
+                utils.set_config_variable(json.name, json.value);
+                res.send({'status': 'OK'})
+        }else{
+            res.send({'status': 'ERROR', 'error': 'variable name and value is required'})
+        }
+    }else{
+        res.send({'status': 'ERROR', 'error': 'config_key is not correct'})
     }
 });
 

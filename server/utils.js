@@ -1,5 +1,7 @@
-var config = require('./config.json')
 var db = require('./db.js')
+var fs = require('fs');
+var config_filename = './config.json'
+var config = require(config_filename)
 
 module.exports.checkregisterformat = function(json){
     if (!json.hasOwnProperty("name") || typeof json.name != 'string' ||
@@ -187,5 +189,20 @@ function mix_product(inputs){
         }
         inputs.splice(0, inputs.length);
         inputs.push({'t_hash': transactions_array, 'quantity': sum});
+    }
+}
+
+module.exports.set_config_variable = function(name, value){
+    config[name] = value;
+    fs.writeFile(config_filename, JSON.stringify(config, null, 4), (err) => {
+        if (err) console.log(err);
+    });
+}
+
+module.exports.get_config_variable = function(name){
+    if(config.hasOwnProperty(name)){
+        return config[name];
+    }else{
+        throw 'DoesNotExist'
     }
 }
