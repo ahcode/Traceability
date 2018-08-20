@@ -19,7 +19,8 @@ CREATE TABLE transactions(
 	raw_client_timestamp varchar(24) NOT NULL,
 	transaction_data json NOT NULL,
 	sign char(256) NOT NULL,
-	updated_quantity json DEFAULT NULL
+	updated_quantity json DEFAULT NULL,
+	errors varchar(64)[] DEFAULT NULL
 );
 
 CREATE TABLE available_inputs(

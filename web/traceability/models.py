@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import JSONField, ArrayField
 from django.urls import reverse
 
 from collections import OrderedDict
@@ -43,6 +43,7 @@ class Transaction(models.Model):
     transaction_data = JSONField()
     sign = models.CharField(max_length=256)
     updated_quantity = JSONField()
+    errors = ArrayField(models.CharField(max_length = 64))
 
     class Meta:
         db_table = 'transactions'

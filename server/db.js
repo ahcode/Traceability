@@ -185,3 +185,13 @@ module.exports.check_available_id = function(pid){
         );
     });
 }
+
+module.exports.set_error = function(transaction_hash, product){
+    query = "UPDATE transactions SET errors = array_append(errors, $1) WHERE hash = $2";
+    values = [product, transaction_hash];
+    pool.query(query, values, (err, res) => {
+        if (err){
+            console.log("DATABASE ERROR");
+        }
+    });
+}

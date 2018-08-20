@@ -23,6 +23,7 @@
                     <p><a href="{% url 'transaction_details' h %}">{{ h|slice:"9" }}</a></p>
                 {% endfor %}
                 {% else %}<span class="font-weight-light">No hay transacciones anteriores.</span>{% endif %}
+                {% if p.product in t.errors %}<div class="alert alert-danger"><strong>Error!</strong> Está gastando más producto del que posee.</div>{% endif %}
                 </div>{% endif %}{% if t.type != 1 %}<div class="col">
                     <p><b>Transacciones Siguiente:</b></p>
                 {% if p.post %}

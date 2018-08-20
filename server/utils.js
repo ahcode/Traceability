@@ -118,9 +118,9 @@ function process_input(key, transaction_hash, mode, product, quantity){
     .then(function(inputs){
         var q_out = null;
         if(inputs == null){
-            //TODO
             //No existe la entrada, se está utilizando producto que no posee
             //Marcar transacción erronea
+            db.set_error(transaction_hash, product);
         }else{
             if(mode == 0)
                 mix_product(inputs);
@@ -140,9 +140,9 @@ function process_input(key, transaction_hash, mode, product, quantity){
                     }
                 }
                 if(quantity > 0){
-                    //TODO
                     //Está gastando más producto del que posee
                     //Marcar transacción erronea
+                    db.set_error(transaction_hash, product);
                 }
             }else{
                 if (mode == 2) //stack
