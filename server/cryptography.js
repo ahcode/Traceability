@@ -12,7 +12,7 @@ module.exports.validate_transaction = function(json){
     delete json.sign
     var serialized = JSON.stringify(json, null, 0);
     json.sign = aux_sign
-    json.hash = module.exports.create_hash(serialized, ['type', 'mode', 'transmitter', 'timestamp', 'data'])
+    json.hash = module.exports.create_hash(serialized)
     return new Promise((suc, rej) => {
         db.getpk(json.transmitter)
         .then(function(pk){

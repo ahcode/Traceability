@@ -26,14 +26,25 @@ router.post('/newtransaction', function(req, res) {
     if (fres.error)
         res.send({'status': 'ERROR', 'error': "Incorrect format: " + fres.error});
     else{
+        //Comprobar que exista el receptor
+        if (json.hasOwnProperty('receiver')){
+            var promise = db.check_key(json.receiver);
+        }else{
+            var promise = new Promise((suc) => {suc();});
+        }
         //Validar la firma
-        crypto.validate_transaction(json).then(function(){
-            db.newtransaction(json).then(function(){utils.update_inputs(json)}); //TODO
-            res.send({'status': 'OK'});
-        },
-        function(msg){
-            res.send({'status': 'ERROR', 'error': msg});
-        });
+        promise.then(function(){
+            crypto.validate_transaction(json).then(function(){
+                db.newtransaction(json).then(function(){utils.update_inputs(json)});
+                res.send({'status': 'OK'});
+            },function(msg){
+                //Error de firma
+                res.send({'status': 'ERROR', 'error': msg});
+            })},
+            function(){
+                //Error de receptor
+                res.send({'status': 'ERROR', 'error': 'Receiver does not exist or is not active'});
+            });
     }
 });
 
