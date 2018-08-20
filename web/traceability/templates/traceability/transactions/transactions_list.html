@@ -13,15 +13,18 @@
         </tr>
     </thead>
     <tbody>
-            
-        {% for t in transactions_list %}
-        <tr>
-        <td><a href="{% url 'transaction_details' t.hash %}">{{ t.hash|slice:"9" }}</a></td>
-        <td>{{ t.client_timestamp|date:'d/m/y H:i:s' }}</td>
-        <td><a href="{% url 'key_details' t.transmitter.hash %}">{{ t.transmitter }}</a></td>
-        <td>{% if t.receiver %}<a href="{% url 'key_details' t.receiver.hash %}">{{ t.receiver }}</a>{% elif t.type != 1 %}<a href="{% url 'key_details' t.transmitter.hash %}">{{ t.transmitter }}</a>{% else %}-{% endif %}</td>
-        </tr>
-        {% endfor %}
+        {% if transactions_list %}
+            {% for t in transactions_list %}
+            <tr>
+            <td><a href="{% url 'transaction_details' t.hash %}">{{ t.hash|slice:"9" }}</a></td>
+            <td>{{ t.client_timestamp|date:'d/m/y H:i:s' }}</td>
+            <td><a href="{% url 'key_details' t.transmitter.hash %}">{{ t.transmitter }}</a></td>
+            <td>{% if t.receiver %}<a href="{% url 'key_details' t.receiver.hash %}">{{ t.receiver }}</a>{% elif t.type != 1 %}<a href="{% url 'key_details' t.transmitter.hash %}">{{ t.transmitter }}</a>{% else %}-{% endif %}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr><td colspan="4">Aún no hay transacciones.</td></tr>
+        {% endif %}
     </tbody>
 </table>
 </div>
