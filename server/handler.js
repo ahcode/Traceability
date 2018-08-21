@@ -4,7 +4,7 @@ var crypto = require('./cryptography.js');
 var utils = require('./utils.js');
 
 router.post('/register', function(req, res) {
-    if (true){ //FALTA COMPROBAR SI EL REGISTRO ESTÁ ABIERTO
+    if (utils.get_config_variable('register_opened')){ //FALTA COMPROBAR SI EL REGISTRO ESTÁ ABIERTO
         var json = req.body;
         //Comprobar formato del objeto recibido
         var fres = utils.checkregisterformat(json)
@@ -65,33 +65,24 @@ router.post('/keycheck', function(req, res){
     }
 });
 
-router.post('/get_variable', function(req, res){
+router.post('/get_register_status', function(req, res){
     json = req.body;
     if(json.hasOwnProperty('config_key') && json.config_key == process.env.REMOTE_CONFIG_KEY){
-        if(json.hasOwnProperty('name')){
-            try{
-                var v = utils.get_config_variable(json.name);
-                res.send({'status': 'OK', 'value': v});
-            }catch(err){
-                if (err == 'DoesNotExist')
-                    res.send({'status': 'ERROR', 'error': 'variable does not exist'});
-            }
-        }else{
-            res.send({'status': 'ERROR', 'error': 'variable name is required'});
-        }
+        var r = utils.get_config_variable('register_opened');
+        res.send({'status': 'OK', 'register_opened': r});
     }else{
         res.send({'status': 'ERROR', 'error': 'config_key is not correct'});
     }
 });
 
-router.post('/set_variable', function(req, res){
+router.post('/set_register_status', function(req, res){
     json = req.body;
     if(json.hasOwnProperty('config_key') && json.config_key == process.env.REMOTE_CONFIG_KEY){
-        if(json.hasOwnProperty('name') && json.hasOwnProperty('value')){
-                utils.set_config_variable(json.name, json.value);
+        if(json.hasOwnProperty('register_opened') && typeof json.register_opened == typeof true){
+                utils.set_config_variable('register_opened', json.register_opened);
                 res.send({'status': 'OK'})
         }else{
-            res.send({'status': 'ERROR', 'error': 'variable name and value is required'})
+            res.send({'status': 'ERROR', 'error': 'register_opened must be a boolean value'})
         }
     }else{
         res.send({'status': 'ERROR', 'error': 'config_key is not correct'})
