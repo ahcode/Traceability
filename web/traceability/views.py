@@ -5,6 +5,7 @@ from django.views.generic import View, TemplateView, ListView, DetailView, Creat
 from django.contrib import messages
 from .models import *
 from django.http import Http404
+from traceability import utils
 
 # Create your views here.
 class Index(TemplateView):
@@ -17,6 +18,11 @@ class ActiveKeysList(ListView):
     context_object_name = 'keys_list'
     paginate_by = 10
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['remote_register'] = utils.get_register_status()
+        return context
+
 class PendingKeysList(ListView):
     model = Key
     template_name = 'traceability/keys/keyslist_pending.html'
@@ -24,12 +30,22 @@ class PendingKeysList(ListView):
     context_object_name = 'keys_list'
     paginate_by = 10
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['remote_register'] = utils.get_register_status()
+        return context
+
 class InactiveKeysList(ListView):
     model = Key
     template_name = 'traceability/keys/keyslist_inactive.html'
     queryset = Key.objects.filter(current_status = 'inactive')
     context_object_name = 'keys_list'
     paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['remote_register'] = utils.get_register_status()
+        return context
 
 class KeyDetails(DetailView):
     model = Key
@@ -176,3 +192,8 @@ class TransactionDetail(DetailView):
         for p in p_list:
             out_list = list(TransactionInput.objects.filter(input = hash, product = p['product']).values_list('t_hash', flat=True))
             p['post'] = out_list
+
+def ChangeRemoteRegisterStatus(request, value):
+    if value == 'on' or value == 'off':
+        utils.set_register_status(value)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

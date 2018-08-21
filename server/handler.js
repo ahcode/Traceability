@@ -69,7 +69,8 @@ router.post('/get_register_status', function(req, res){
     json = req.body;
     if(json.hasOwnProperty('config_key') && json.config_key == process.env.REMOTE_CONFIG_KEY){
         var r = utils.get_config_variable('register_opened');
-        res.send({'status': 'OK', 'register_opened': r});
+        if(r) res.send({'status': 'OK', 'remote_register': 'on'});
+        else res.send({'status': 'OK', 'remote_register': 'off'});        
     }else{
         res.send({'status': 'ERROR', 'error': 'config_key is not correct'});
     }
@@ -78,11 +79,14 @@ router.post('/get_register_status', function(req, res){
 router.post('/set_register_status', function(req, res){
     json = req.body;
     if(json.hasOwnProperty('config_key') && json.config_key == process.env.REMOTE_CONFIG_KEY){
-        if(json.hasOwnProperty('register_opened') && typeof json.register_opened == typeof true){
-                utils.set_config_variable('register_opened', json.register_opened);
-                res.send({'status': 'OK'})
+        if(json.hasOwnProperty('remote_register') && (json.remote_register == 'on' || json.remote_register == 'off')){
+            if(json.remote_register == 'on')
+                utils.set_config_variable('register_opened', true);
+            else
+                utils.set_config_variable('register_opened', false);
+            res.send({'status': 'OK'})
         }else{
-            res.send({'status': 'ERROR', 'error': 'register_opened must be a boolean value'})
+            res.send({'status': 'ERROR', 'error': 'remote_register must be \'on\' or \'off\''})
         }
     }else{
         res.send({'status': 'ERROR', 'error': 'config_key is not correct'})

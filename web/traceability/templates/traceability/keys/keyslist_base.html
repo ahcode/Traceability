@@ -34,7 +34,14 @@
     </tbody>
 </table>
 </div>
-<a href="{% url 'new_key' %}" class="float-right mt-2 btn btn-primary">Nueva Clave</a>
+<div class="mt-2 mb-2 float-right text-right">
+<a href="{% url 'new_key' %}" class="mb-2 btn btn-primary">Nueva Clave</a><br>
+<span>Registro remoto:</span>
+<div class="btn-group">
+    <button onclick="location.href='{% url 'remote_register' 'on' %}';" class="border btn {% if remote_register == 'on' %}btn-success active{% endif %}">On</button>
+    <button onclick="location.href='{% url 'remote_register' 'off' %}';" class="border btn {% if remote_register == 'off' %}btn-danger active{% endif %}">Off</button>
+</div>
+</div>
 {% if is_paginated %}
 <ul class="pagination mt-2 float-left">
   <li class="page-item{% if not page_obj.has_previous %} disabled{% endif %}"><a class="page-link" href="?page=1">&lt;&lt;</a></li>
