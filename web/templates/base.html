@@ -68,8 +68,11 @@
             <li class="nav-item {% block nav-transactions %}{% endblock %}">
               <a class="nav-link" href="{% url 'transactions' %}">Transacciones</a>
             </li>
-            <li class="nav-item {% block nav-search %}{% endblock %}">
-              <a class="nav-link" href="#">Buscar Productos</a>
+            <li class="nav-item {% block nav-products %}{% endblock %}">
+              <a class="nav-link" href="{% url 'id_search' %}">Localizar Productos</a>
+            </li>
+            <li class="nav-item {% block nav-config %}{% endblock %}">
+              <a class="nav-link" href="#">Configuración</a>
             </li>
           </ul>
         </div>

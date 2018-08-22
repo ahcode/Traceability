@@ -16,4 +16,6 @@ urlpatterns = [
     path('transactions/', views.TransactionsList.as_view(), name='transactions'),
     path('transactions/<slug:hash>', views.TransactionDetail.as_view(), name='transaction_details'),
     path('remote_register/<slug:value>', views.ChangeRemoteRegisterStatus, name='remote_register'),
+    path('ids/search/', views.IdSearch.as_view(), name='id_search'),
+    path('ids/details/<slug:id>', views.IdDetails.as_view(), name='id_details'),
 ]

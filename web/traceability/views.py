@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.views.generic import View, TemplateView, ListView, DetailView, CreateView, UpdateView
@@ -197,3 +197,24 @@ def ChangeRemoteRegisterStatus(request, value):
     if value == 'on' or value == 'off':
         utils.set_register_status(value)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+class IdDetails(DetailView):
+    model = ProductID
+    template_name = 'traceability/products/product_details.html'
+    context_object_name = 'p'
+    slug_url_kwarg = 'id'
+    slug_field = 'id'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if context[self.context_object_name]:
+            context['origins'] = utils.get_origins(context[self.context_object_name])
+        return context
+
+class IdSearch(View):
+    def get(self, request):
+        id = request.GET.get('id', None)
+        if not id:
+            return render(request, 'traceability/products/product_search.html')
+        else:
+            return redirect('id_details', id)

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block nav-products %}active{% endblock %}
+{% block content %}
+<h3 class="mt-3 mb-5">Localizador de Productos</h3>
+<form class="justify-content-center mt-5 form-inline" action="{% url 'id_search' %}">
+    <input type="text" class="form-control" name="id" placeholder="Identificador">
+    <button type="submit" class="ml-3 btn btn-success">Buscar</button>
+</form>
+{% endblock %}

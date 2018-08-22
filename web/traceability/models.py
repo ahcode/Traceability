@@ -77,3 +77,14 @@ class TransactionInput(models.Model):
     class Meta:
         db_table = 't_inputs'
         unique_together = (('t_hash', 'input', 'product'),)
+
+class ProductID(models.Model):
+    id = models.CharField(max_length=64, primary_key=True)
+    product = models.CharField(max_length=64)
+    first_transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='first_t', db_column='first_transaction')
+    last_transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='last_t', db_column='last_transaction')
+    owner = models.ForeignKey(Key, on_delete=models.CASCADE, related_name='owner', db_column='owner', null=True)
+    destination = models.CharField(max_length=64, null=True)
+
+    class Meta:
+        db_table = 'product_id'
