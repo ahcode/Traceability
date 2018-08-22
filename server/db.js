@@ -64,6 +64,7 @@ module.exports.new_available_inputs = function(key, product, inputs){
 
 module.exports.del_available_inputs = function(key, product){
     query = "DELETE FROM available_inputs WHERE key_hash = $1 AND product = $2";
+    values = [key, product]
     pool.query(query, values, (err, res) => {
             if (err){
                 console.log("DATABASE ERROR");
@@ -100,10 +101,8 @@ module.exports.update_available_inputs = function(key, product, inputs){
 
 module.exports.set_inputs = function(transaction, input_list, product){
     query = "INSERT INTO t_inputs VALUES ($1, $2, $3);";
-    values = [transaction, null, product];
-    for(i = 0; i < input_list.length; i++){
-        values[1] = input_list[i];
-        pool.query(query, values, (err, res) => {
+    for(let i = 0; i < input_list.length; i++){
+        pool.query(query, [transaction, input_list[i], product], (err, res) => {
             if (err){
                 console.log("DATABASE ERROR");
             }
