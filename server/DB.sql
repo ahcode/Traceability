@@ -45,3 +45,12 @@ CREATE TABLE product_id(
 	owner varchar(64) REFERENCES keys,
 	destination varchar(64)
 );
+
+CREATE TABLE product_types(
+	code varchar(64) PRIMARY KEY NOT NULL,
+	name varchar(64) NOT NULL,
+	min_measure_unit varchar(20) NOT NULL,
+	measure_unit varchar(20),
+	multiplier int,
+	description varchar(300)
+)

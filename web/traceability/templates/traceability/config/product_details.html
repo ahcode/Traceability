@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block nav-config %}active{% endblock %}
+{% block content %}
+<h3 class="mt-3">Gestión de Productos</h3>
+<table class="mt-5 mb-3 table" style="max-width: 600px; margin: auto">
+    <tr><td class = "text-left"><span class="font-weight-bold text-left">Código:</span></td><td>{{ p.code }}</td></tr>
+    <tr><td class = "text-left"><span class="font-weight-bold text-left">Nombre:</span></td><td>{{ p.name }}</td></tr>
+    <tr><td class = "text-left"><span class="font-weight-bold text-left">Unidad mínima:</span></td><td>{{ p.min_measure_unit }}</td></tr>
+    {% if p.measure_unit %}
+    <tr><td class = "text-left"><span class="font-weight-bold text-left">Unidad:</span></td><td>{{ p.measure_unit }}</td></tr>
+    <tr><td class = "text-left"><span class="font-weight-bold text-left">Multiplicador:</span></td><td>{{ p.multiplier }}</td></tr>
+    {% endif %}
+    <tr><td class = "text-left"><span class="font-weight-bold text-left">Descripción:</span></td><td>{% if p.description %}{{ p.description|linebreaks }}{% else %}<span class="font-weight-light">No hay descripción</span>{% endif %}</td></tr>
+</table>
+<a href="{% url 'modify_product' p.code %}" class="btn btn-primary">Modificar</a>
+<a href="{% url 'remove_product' p.code %}" class="btn btn-danger">Eliminar</a>
+{% endblock %}

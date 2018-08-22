@@ -18,4 +18,9 @@ urlpatterns = [
     path('remote_register/<slug:value>', views.ChangeRemoteRegisterStatus, name='remote_register'),
     path('ids/search/', views.IdSearch.as_view(), name='id_search'),
     path('ids/details/<slug:id>', views.IdDetails.as_view(), name='id_details'),
+    path('config/products/', views.ProductList.as_view(), name='config_products'),
+    path('config/products/new', views.NewProduct.as_view(), name='new_product'),
+    path('config/products/details/<slug:code>', views.ProductDetails.as_view(), name='product_details'),
+    path('config/products/modify/<slug:code>', views.ModifyProduct.as_view(), name='modify_product'),
+    path('config/products/remove/<slug:code>', views.RemoveProduct, name='remove_product'),
 ]

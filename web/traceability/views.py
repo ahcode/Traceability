@@ -1,8 +1,9 @@
 from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
-from django.views.generic import View, TemplateView, ListView, DetailView, CreateView, UpdateView
+from django.views.generic import View, TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 from .models import *
 from django.http import Http404
 from traceability import utils
@@ -170,12 +171,24 @@ class TransactionDetail(DetailView):
         for p in p_list:
             l.append({})
             l[-1]['product'] = p[0]
+            p_obj = None
+            try:
+                p_obj = Product.objects.get(code = p[0])
+                l[-1]['name'] = p_obj.name
+            except ObjectDoesNotExist:
+                pass
             if newid:
                 l[-1]['newid'] = newid
             elif isinstance(p[1], str):
                 l[-1]['id'] = p[1]
             else:
                 l[-1]['quantity'] = p[1]
+                if p_obj:
+                    if p_obj.measure_unit:
+                        l[-1]['unit'] = p_obj.measure_unit
+                        l[-1]['quantity'] /= p_obj.multiplier
+                    else:
+                        l[-1]['unit'] = p_obj.min_measure_unit
         return l
 
     def set_quantity(self, p_list, updated_quantity):
@@ -209,6 +222,11 @@ class IdDetails(DetailView):
         context = super().get_context_data(**kwargs)
         if context[self.context_object_name]:
             context['origins'] = utils.get_origins(context[self.context_object_name])
+            try:
+                p = Product.objects.get(code = context[self.context_object_name].product)
+                context['p_name'] = p.name
+            except ObjectDoesNotExist:
+                pass
         return context
 
 class IdSearch(View):
@@ -218,3 +236,43 @@ class IdSearch(View):
             return render(request, 'traceability/products/product_search.html')
         else:
             return redirect('id_details', id)
+
+class ProductList(ListView):
+    model = Product
+    template_name = 'traceability/config/product_list.html'
+    context_object_name = 'product_list'
+    paginate_by = 10
+
+class NewProduct(CreateView):
+    model = Product
+    fields = ['code', 'name', 'min_measure_unit', 'measure_unit', 'multiplier', 'description']
+    template_name = "traceability/config/product_form.html"
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, "Se ha registrado el nuevo producto.")
+        return super().form_valid(form)
+
+class ModifyProduct(UpdateView):
+    model = Product
+    fields = ['name', 'min_measure_unit', 'measure_unit', 'multiplier', 'description']
+    template_name = "traceability/config/product_form.html"
+    slug_url_kwarg = 'code'
+    slug_field = 'code'
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, "Se ha modificado el producto.")
+        return super().form_valid(form)
+
+def RemoveProduct(request, code):
+    try:
+        p = Product.objects.get(code = code)
+        p.delete()
+        messages.add_message(request, messages.SUCCESS, "El producto '" + code + "' se ha eliminado correctamente.")
+    except ObjectDoesNotExist:
+        messages.add_message(request, messages.ERROR, "No se ha encontrado el producto.")
+    return redirect('config_products')
+
+class ProductDetails(DetailView):
+    model = Product
+    template_name = 'traceability/config/product_details.html'
+    context_object_name = 'p'
+    slug_url_kwarg = 'code'
+    slug_field = 'code'

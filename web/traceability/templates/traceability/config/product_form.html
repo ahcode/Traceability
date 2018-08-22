@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load bootstrap %}
-{% block nav-stages %}active{% endblock %}
+{% block nav-config %}active{% endblock %}
 {% block content %}
-<h3 class="mt-3">Gestión de Claves</h3>
+<h3 class="mt-3">Gestión de Productos</h3>
 <form style="max-width:500px; margin: auto" method="post" action="">
     {% csrf_token %}
     {{ form|bootstrap }}

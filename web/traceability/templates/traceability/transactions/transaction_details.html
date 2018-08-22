@@ -12,7 +12,7 @@
 {% for p in product %}
     <div class="card text-center">
         <div class="card-header">
-            <a class="card-link" data-toggle="collapse" href="#collapse-{{ forloop.counter }}">{{ p.product }} - {% if p.quantity %}{{ p.quantity }}{% elif p.newid %}Nuevo ID: {{ p.newid }}{% else %}ID: {{ p.id }}{% endif %}</a>
+            <a class="card-link" data-toggle="collapse" href="#collapse-{{ forloop.counter }}">{% if p.name %}{{ p.name }}{% else %}{{ p.product }}{% endif %} - {% if p.quantity %}{{ p.quantity }} {% if p.unit %}{{ p.unit }}{% endif %}{% elif p.newid %}Nuevo ID: {{ p.newid }}{% else %}ID: {{ p.id }}{% endif %}</a>
         </div>
         <div id="collapse-{{ forloop.counter }}" class="collapse" data-parent="#accordion">
             <div class="card-body">
@@ -43,7 +43,7 @@
 {% for p in product_in %}
     <div class="card text-center">
         <div class="card-header">
-            <a class="card-link" data-toggle="collapse" href="#collapse-in-{{ forloop.counter }}">{{ p.product }} - {% if p.quantity %}{{ p.quantity }}{% elif p.newid %}Nuevo ID: {{ p.newid }}{% else %}ID: {{ p.id }}{% endif %}</a>
+            <a class="card-link" data-toggle="collapse" href="#collapse-in-{{ forloop.counter }}">{% if p.name %}{{ p.name }}{% else %}{{ p.product }}{% endif %} - {% if p.quantity %}{{ p.quantity }} {% if p.unit %}{{ p.unit }}{% endif %}{% elif p.newid %}Nuevo ID: {{ p.newid }}{% else %}ID: {{ p.id }}{% endif %}</a>
         </div>
         <div id="collapse-in-{{ forloop.counter }}" class="collapse" data-parent="#accordion">
             <div class="card-body">
@@ -65,7 +65,7 @@
 {% for p in product_out %}
     <div class="card text-center">
         <div class="card-header">
-            <a class="card-link" data-toggle="collapse" href="#collapse-out-{{ forloop.counter }}">{{ p.product }} - {% if p.quantity %}{{ p.quantity }}{% elif p.newid %}Nuevo ID: {{ p.newid }}{% else %}ID: {{ p.id }}{% endif %}</a>
+            <a class="card-link" data-toggle="collapse" href="#collapse-out-{{ forloop.counter }}">{% if p.name %}{{ p.name }}{% else %}{{ p.product }}{% endif %} - {% if p.quantity %}{{ p.quantity }} {% if p.unit %}{{ p.unit }}{% endif %}{% elif p.newid %}Nuevo ID: {{ p.newid }}{% else %}ID: {{ p.id }}{% endif %}</a>
         </div>
         <div id="collapse-out-{{ forloop.counter }}" class="collapse" data-parent="#accordion">
             <div class="card-body">
