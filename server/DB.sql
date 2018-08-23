@@ -53,4 +53,16 @@ CREATE TABLE product_types(
 	measure_unit varchar(20),
 	multiplier int,
 	description varchar(300)
-)
+);
+
+CREATE TABLE origins(
+	code varchar(64) PRIMARY KEY NOT NULL,
+	name varchar(64) NOT NULL,
+	description varchar(300)
+);
+
+CREATE TABLE destinations(
+	code varchar(64) PRIMARY KEY NOT NULL,
+	name varchar(64) NOT NULL,
+	description varchar(300)
+);

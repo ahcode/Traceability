@@ -102,3 +102,25 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('product_details', kwargs={'code': self.code})
+
+class Origin(models.Model):
+    code = models.CharField('Código', max_length=64, primary_key=True)
+    name = models.CharField('Nombre', max_length=64)
+    description = models.TextField('Descripción', max_length=300, null=True, blank=True)
+    
+    class Meta:
+        db_table = 'origins'
+
+    def get_absolute_url(self):
+        return reverse('origin_details', kwargs={'code': self.code})
+
+class Destination(models.Model):
+    code = models.CharField('Código', max_length=64, primary_key=True)
+    name = models.CharField('Nombre', max_length=64)
+    description = models.TextField('Descripción', max_length=300, null=True, blank=True)
+    
+    class Meta:
+        db_table = 'destinations'
+
+    def get_absolute_url(self):
+        return reverse('destination_details', kwargs={'code': self.code})

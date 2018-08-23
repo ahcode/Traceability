@@ -1,0 +1,36 @@
+{% extends 'traceability/config/config_base.html' %}
+{% block tab-origins %}active{% endblock %}
+{% block config %}
+<div class="table-responsive">
+    <table class = "table table-striped">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if origin_list %}
+        {% for o in origin_list %}
+            <tr><td class="align-middle">{{ o.code }}</td><td class="align-middle">{{ o.name }}</td>
+            <td class="align-middle"><a href="{% url 'origin_details' o.code %}" class="btn btn-info" role="button">Detalles</a> <a href="{% url 'remove_origin' o.code %}" class="btn btn-danger" role="button">Eliminar</a></td></td>
+            </tr>
+        {% endfor %}
+        {% else %}
+            <tr><td colspan="3">No hay orígenes registrados</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+{% if is_paginated %}
+<ul class="pagination mt-2 float-left">
+  <li class="page-item{% if not page_obj.has_previous %} disabled{% endif %}"><a class="page-link" href="?page=1">&lt;&lt;</a></li>
+  <li class="page-item{% if not page_obj.has_previous %} disabled{% endif %}"><a class="page-link" href="?page={% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% endif %}">&lt;</a></li>
+  <li class="page-item active"><a class="page-link" href="#">{{page_obj.number}} de {{page_obj.paginator.num_pages}}</a></li>
+  <li class="page-item{% if not page_obj.has_next %} disabled{% endif %}"><a class="page-link" href="?page={% if page_obj.has_next %}{{ page_obj.next_page_number }}{% endif %}">&gt;</a></li>
+  <li class="page-item{% if not page_obj.has_next %} disabled{% endif %}"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&gt;&gt;</a></li>
+  </ul>
+{% endif %}
+<a href="{% url 'new_origin' %}" class="float-right mt-3 btn btn-primary">Nuevo Origen</a><br>
+{% endblock %}
