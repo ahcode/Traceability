@@ -4,6 +4,13 @@
 <h3 class="mt-3 mb-4">Transacciones</h3>
 <div class="text-left" style="max-width: 700px; margin: auto">
 <p><b>Hash:</b> {{ t.hash }}</p>
+{% if t.type == 0 %}
+<p><b><i>Transacción generadora.</i></b></p>
+<p><b>Origen:</b> {% if origin %}<a href = "{% url 'origin_details' origin.code %}">{{ origin.name }}</a>{% else %}{{ t.transaction_data.origin }}{% endif %}</p>
+{% elif t.type == 1 %}
+<p><b><i>Transacción final.</i></b></p>
+<p><b>Destino:</b> {% if destination %}<a href = "{% url 'destination_details' destination.code %}">{{ destination.name }}</a>{% else %}{{ t.transaction_data.destination }}{% endif %}</p>
+{% endif %}
 <p><b>Transmisor:</b> <a href="{% url 'key_details' t.transmitter.hash %}">{{ t.transmitter }}</a></p>
 {% if t.receiver %}<p><b>Receptor:</b> <a href="{% url 'key_details' t.receiver.hash %}">{{ t.receiver }}</a></p>{% endif %}
 {% if product %}
@@ -84,7 +91,7 @@
 </div>
 {% endif %}
 {% for key, value in t.transaction_data.items %}
-    {% if key != 'product' and key != 'product_in' and key != 'product_out' and key != 'new_id' %}
+    {% if key != 'product' and key != 'product_in' and key != 'product_out' and key != 'new_id' and key != 'origin' and key != 'destination' %}
     <p><b>{{ key }}:</b> {{ value }}</p>
     {% endif %}
 {% endfor %}

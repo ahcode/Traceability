@@ -163,6 +163,12 @@ class TransactionDetail(DetailView):
                 self.set_quantity(context['product_in'], obj.updated_quantity)
                 self.set_pre_transactions(context['product_in'], obj.hash)
                 self.set_post_transactions(context['product_out'], obj.hash)
+            if 'origin' in obj.transaction_data:
+                try: context['origin'] = Origin.objects.get(code = obj.transaction_data['origin'])
+                except ObjectDoesNotExist: pass
+            if 'destination' in obj.transaction_data:
+                try: context['destination'] = Destination.objects.get(code = obj.transaction_data['destination'])
+                except ObjectDoesNotExist: pass
 
         return context
 
