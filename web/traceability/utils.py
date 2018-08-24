@@ -1,7 +1,8 @@
 import requests
 import os
 import json
-from .models import TransactionInput, Transaction
+from django.core.exceptions import ObjectDoesNotExist
+from .models import TransactionInput, Transaction, Origin
 
 def get_register_status():
     json_data = {"config_key": os.environ.get('REMOTE_CONFIG_KEY', '')}
@@ -35,6 +36,8 @@ def get_origins(product_id_obj):
             if t.type == 0:
                 if not t.transaction_data['product'][0][0] in origin_dict:
                     origin_dict[t.transaction_data['product'][0][0]] = []
-                origin_dict[t.transaction_data['product'][0][0]].append(t.transaction_data['origin'])
+                try: o = Origin.objects.get(code = t.transaction_data['origin'])
+                except ObjectDoesNotExist: o = t.transaction_data['origin']
+                origin_dict[t.transaction_data['product'][0][0]].append(o)
     
     return origin_dict

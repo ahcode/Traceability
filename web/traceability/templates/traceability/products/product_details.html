@@ -12,7 +12,7 @@
 <p><b>Etapa actual:</b> <a href="{% url 'key_details' p.owner.hash %}">{{ p.owner.name }}</a></p>
 {% else %}
 <p><b>Estado:</b> En destino</p>
-<p><b>Destino:</b> {{ p.destination }}</p>
+<p><b>Destino:</b> {% if destination %}<a href="{% url 'destination_details' destination.code %}">{{ destination.name }}</a>{% else %}{{ p.destination }}{% endif %}</p>
 {% endif %}
 <p><b>Materia prima:</b></p>
 <table class="table table-striped">
@@ -23,7 +23,7 @@
         {% for product, origin_list in origins.items %}
         <tr><td>{{ product }}</td><td>
             {% for o in origin_list %}
-                {{ o }}{% if not forloop.last %}, {% endif %}
+                {% if o.code %}<a href="{% url 'origin_details' o.code %}">{{ o.name }}</a>{% else %}{{ o }}{% endif %}{% if not forloop.last %}, {% endif %}
             {% endfor %}
         </td></tr>
         {% endfor %}

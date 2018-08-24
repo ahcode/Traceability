@@ -233,6 +233,9 @@ class IdDetails(DetailView):
                 context['p_name'] = p.name
             except ObjectDoesNotExist:
                 pass
+            if context[self.context_object_name].destination:
+                try: context['destination'] = Destination.objects.get(code = context[self.context_object_name].destination)
+                except ObjectDoesNotExist: pass
         return context
 
 class IdSearch(View):
