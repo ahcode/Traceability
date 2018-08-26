@@ -4,7 +4,7 @@
 {% block content %}
 <h3 class="mt-3 mb-4">Localizador de Productos</h3>
 <div class="row">
-<div class="text-left col-sm-6 offset-1">
+<div class="text-left col-sm-6 offset-sm-1">
 <p><b>Producto:</b> {% if p_name %}{{ p_name }}{% else %}{{ p.product }}{% endif %}</p>
 <p><b>Identificador:</b> {{ p.id }}</p>
 <p><b>Primera transacción:</b> <a href="{% url 'transaction_details' p.first_transaction %}">{{ p.first_transaction.hash|slice:"15" }}</a></p>

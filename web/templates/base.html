@@ -74,6 +74,16 @@
             <li class="nav-item {% block nav-config %}{% endblock %}">
               <a class="nav-link" href="{% url 'config_products' %}">Configuración</a>
             </li>
+            {% if request.user.is_authenticated %}
+            <li class="nav-item ml-5"><span class="navbar-text">({{ request.user.username }})</span></li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}"><i class="flaticon-logout"></i></a>
+            </li>
+            {% else %}
+            <li class="nav-item {% block nav-login %}{% endblock %}">
+              <a class="nav-link" href="{% url 'login' %}"><i class="flaticon-login"></i></a>
+            </li>
+            {% endif %}
           </ul>
         </div>
       </div>

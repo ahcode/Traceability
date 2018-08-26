@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load bootstrap %}
+{% block nav-login %}active{% endblock %}
+{% block content %}
+<h3 class="mt-3 mb-4">Inicio de sesión</h3>
+<div class="col-sm-4 offset-sm-4">
+  <form method="post">
+    {% csrf_token %}
+    {{ form | bootstrap }}
+    <button class="btn btn-primary" type="submit">Login</button>
+  </form>
+</div>
+{% endblock %}
