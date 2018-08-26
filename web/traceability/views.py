@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import View, TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from .models import *
 from django.http import Http404
 from traceability import utils
@@ -136,7 +137,20 @@ class TransactionsList(ListView):
 
     def get_queryset(self):
         q = super().get_queryset()
+        if 'mindate' in self.request.GET:
+            q = q.filter(client_timestamp__gte=self.request.GET['mindate'])
+        if 'maxdate' in self.request.GET:
+            q = q.filter(client_timestamp__lte=self.request.GET['maxdate'])
+        if 'key' in self.request.GET:
+            q = q.filter(Q(transmitter__name=self.request.GET['key']) | Q(transmitter__hash=self.request.GET['key']))
+        if 'origin' in self.request.GET:
+            q = q.filter(transaction_data__origin=self.request.GET['origin'])
+        if 'destination' in self.request.GET:
+            q = q.filter(transaction_data__destination=self.request.GET['destination'])
         return q
+
+class AdvancedSearch(TemplateView):
+    template_name = 'traceability/transactions/advanced_search.html'
 
 class TransactionDetail(DetailView):
     model = Transaction

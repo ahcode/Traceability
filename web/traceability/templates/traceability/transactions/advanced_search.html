@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block nav-transactions %}active{% endblock %}
+{% block content %}
+<h3 class="mt-3 mb-5">Búsqueda Avanzada de Transacciones</h3>
+<div class="col-6 offset-3 text-left">
+<form id="search-form" action="{% url 'transactions' %}">
+    <div class="form-group">
+        <label for="mindate">Desde:</label>
+        <input type="date" class="form-control" id="mindate" name="mindate">
+    </div><div class="form-group">
+        <label for="maxdate">Hasta:</label>
+        <input type="date" class="form-control" id="maxdate" name="maxdate">
+    </div><div class="form-group">
+        <label for="key">Transmisor:</label>
+        <input type="text" class="form-control" id="key" name="key">
+    </div><div class="form-group">
+        <label for="origin">Origen:</label>
+        <input type="text" class="form-control" id="origin" name="origin">
+    </div><div class="form-group">
+        <label for="destination">Destino:</label>
+        <input type="text" class="form-control" id="destination" name="destination">
+    </div><div class="form-group text-center">
+        <button type="submit" class="ml-3 btn btn-success">Buscar</button>
+    </div>
+</form>
+<script>
+    $('#search-form').submit(function () {
+        $(this)
+            .find('input[name]')
+            .filter(function () {
+                return !this.value;
+            })
+            .prop('name', '');
+    });
+</script>
+</div>
+{% endblock %}
