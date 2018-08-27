@@ -60,10 +60,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item {% block nav-home %}{% endblock %}">
-              <a class="nav-link" href="{% url 'index' %}">Home</a>
-            </li>
-            <li class="nav-item {% block nav-stages %}{% endblock %}">
-              <a class="nav-link" href="{% url 'keys' %}">Claves{% if pending_keys > 0 %} <span class="badge badge-pill badge-danger">{{ pending_keys }}</span>{% endif %}</a>
+              <a class="nav-link" href="{% url 'index' %}">Inicio</a>
             </li>
             <li class="nav-item {% block nav-transactions %}{% endblock %}">
               <a class="nav-link" href="{% url 'transactions' %}">Transacciones</a>
@@ -71,10 +68,13 @@
             <li class="nav-item {% block nav-products %}{% endblock %}">
               <a class="nav-link" href="{% url 'id_search' %}">Localizar Productos</a>
             </li>
+            {% if request.user.is_authenticated %}
+            <li class="nav-item {% block nav-stages %}{% endblock %}">
+              <a class="nav-link" href="{% url 'keys' %}">Claves{% if pending_keys > 0 %} <span class="badge badge-pill badge-danger">{{ pending_keys }}</span>{% endif %}</a>
+            </li>
             <li class="nav-item {% block nav-config %}{% endblock %}">
               <a class="nav-link" href="{% url 'config_products' %}">Configuración</a>
             </li>
-            {% if request.user.is_authenticated %}
             <li class="nav-item ml-5"><span class="navbar-text">({{ request.user.username }})</span></li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'logout' %}"><i class="flaticon-logout"></i></a>

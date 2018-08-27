@@ -2,6 +2,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.views.generic import View, TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.admin.views.decorators import user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
@@ -9,11 +11,16 @@ from .models import *
 from django.http import Http404
 from traceability import utils
 
+class StaffRequired(LoginRequiredMixin, UserPassesTestMixin):
+    login_url = reverse_lazy('login')
+    def test_func(self):
+        return self.request.user.is_staff
+
 # Create your views here.
 class Index(TemplateView):
     template_name = 'traceability/index.html'
 
-class ActiveKeysList(ListView):
+class ActiveKeysList(StaffRequired, ListView):
     model = Key
     template_name = 'traceability/keys/keyslist_active.html'
     queryset = Key.objects.filter(current_status = 'active')
@@ -25,7 +32,7 @@ class ActiveKeysList(ListView):
         context['remote_register'] = utils.get_register_status()
         return context
 
-class PendingKeysList(ListView):
+class PendingKeysList(StaffRequired, ListView):
     model = Key
     template_name = 'traceability/keys/keyslist_pending.html'
     queryset = Key.objects.filter(current_status = 'new')
@@ -37,7 +44,7 @@ class PendingKeysList(ListView):
         context['remote_register'] = utils.get_register_status()
         return context
 
-class InactiveKeysList(ListView):
+class InactiveKeysList(StaffRequired, ListView):
     model = Key
     template_name = 'traceability/keys/keyslist_inactive.html'
     queryset = Key.objects.filter(current_status = 'inactive')
@@ -49,7 +56,7 @@ class InactiveKeysList(ListView):
         context['remote_register'] = utils.get_register_status()
         return context
 
-class KeyDetails(DetailView):
+class KeyDetails(StaffRequired, DetailView):
     model = Key
     template_name = 'traceability/keys/key_details.html'
     slug_url_kwarg = 'hash'
@@ -63,6 +70,7 @@ class KeyDetails(DetailView):
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 
+@user_passes_test(lambda u: u.is_staff, login_url=reverse_lazy('login'))
 def ActivateKey(request, hash):
     try:
         k = Key.objects.get(hash = hash)
@@ -73,6 +81,7 @@ def ActivateKey(request, hash):
         messages.add_message(request, messages.ERROR, "No se ha encontrado la clave.")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
+@user_passes_test(lambda u: u.is_staff, login_url=reverse_lazy('login'))
 def DeactivateKey(request, hash):
     try:
         k = Key.objects.get(hash = hash)
@@ -83,6 +92,7 @@ def DeactivateKey(request, hash):
         messages.add_message(request, messages.ERROR, "No se ha encontrado la clave.")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
+@user_passes_test(lambda u: u.is_staff, login_url=reverse_lazy('login'))
 def RemoveKey(request, hash):
     try:
         k = Key.objects.get(hash = hash)
@@ -95,7 +105,7 @@ def RemoveKey(request, hash):
         messages.add_message(request, messages.ERROR, "No se ha encontrado la clave.")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-class NewKey(CreateView):
+class NewKey(StaffRequired, CreateView):
     model = Key
     fields = ['name', 'public_key', 'current_status', 'description']
     template_name = "traceability/keys/key_form.html"
@@ -103,7 +113,7 @@ class NewKey(CreateView):
         messages.add_message(self.request, messages.SUCCESS, "Se ha registrado la nueva clave.")
         return super().form_valid(form)
 
-class ModifyKey(UpdateView):
+class ModifyKey(StaffRequired, UpdateView):
     model = Key
     fields = ['name', 'description']
     template_name = "traceability/keys/key_form.html"
@@ -113,6 +123,7 @@ class ModifyKey(UpdateView):
         messages.add_message(self.request, messages.SUCCESS, "Se ha actualizado la información.")
         return super().form_valid(form)
 
+@user_passes_test(lambda u: u.is_staff, login_url=reverse_lazy('login'))
 def KeySearch(request):
     searchbox = request.GET.get('sb')
     if searchbox:
@@ -226,6 +237,7 @@ class TransactionDetail(DetailView):
             out_list = list(TransactionInput.objects.filter(input = hash, product = p['product']).values_list('t_hash', flat=True))
             p['post'] = out_list
 
+@user_passes_test(lambda u: u.is_staff, login_url=reverse_lazy('login'))
 def ChangeRemoteRegisterStatus(request, value):
     if value == 'on' or value == 'off':
         utils.set_register_status(value)
@@ -260,13 +272,13 @@ class IdSearch(View):
         else:
             return redirect('id_details', id)
 
-class ProductList(ListView):
+class ProductList(StaffRequired, ListView):
     model = Product
     template_name = 'traceability/config/product_list.html'
     context_object_name = 'product_list'
     paginate_by = 10
 
-class NewProduct(CreateView):
+class NewProduct(StaffRequired, CreateView):
     model = Product
     fields = ['code', 'name', 'min_measure_unit', 'measure_unit', 'multiplier', 'description']
     template_name = "traceability/config/product_form.html"
@@ -274,7 +286,7 @@ class NewProduct(CreateView):
         messages.add_message(self.request, messages.SUCCESS, "Se ha registrado el nuevo producto.")
         return super().form_valid(form)
 
-class ModifyProduct(UpdateView):
+class ModifyProduct(StaffRequired, UpdateView):
     model = Product
     fields = ['name', 'min_measure_unit', 'measure_unit', 'multiplier', 'description']
     template_name = "traceability/config/product_form.html"
@@ -284,6 +296,7 @@ class ModifyProduct(UpdateView):
         messages.add_message(self.request, messages.SUCCESS, "Se ha modificado el producto.")
         return super().form_valid(form)
 
+@user_passes_test(lambda u: u.is_staff, login_url=reverse_lazy('login'))
 def RemoveProduct(request, code):
     try:
         p = Product.objects.get(code = code)
@@ -293,20 +306,20 @@ def RemoveProduct(request, code):
         messages.add_message(request, messages.ERROR, "No se ha encontrado el producto.")
     return redirect('config_products')
 
-class ProductDetails(DetailView):
+class ProductDetails(StaffRequired, DetailView):
     model = Product
     template_name = 'traceability/config/product_details.html'
     context_object_name = 'p'
     slug_url_kwarg = 'code'
     slug_field = 'code'
 
-class OriginList(ListView):
+class OriginList(StaffRequired, ListView):
     model = Origin
     template_name = 'traceability/config/origin_list.html'
     context_object_name = 'origin_list'
     paginate_by = 10
 
-class NewOrigin(CreateView):
+class NewOrigin(StaffRequired, CreateView):
     model = Origin
     fields = ['code', 'name', 'description']
     template_name = "traceability/config/origin_form.html"
@@ -314,14 +327,14 @@ class NewOrigin(CreateView):
         messages.add_message(self.request, messages.SUCCESS, "Se ha registrado el nuevo orígen.")
         return super().form_valid(form)
 
-class OriginDetails(DetailView):
+class OriginDetails(StaffRequired, DetailView):
     model = Origin
     template_name = 'traceability/config/origin_details.html'
     context_object_name = 'o'
     slug_url_kwarg = 'code'
     slug_field = 'code'
 
-class ModifyOrigin(UpdateView):
+class ModifyOrigin(StaffRequired, UpdateView):
     model = Origin
     fields = ['name', 'description']
     template_name = "traceability/config/origin_form.html"
@@ -331,6 +344,7 @@ class ModifyOrigin(UpdateView):
         messages.add_message(self.request, messages.SUCCESS, "Se ha modificado el origen.")
         return super().form_valid(form)
 
+@user_passes_test(lambda u: u.is_staff, login_url=reverse_lazy('login'))
 def RemoveOrigin(request, code):
     try:
         o = Origin.objects.get(code = code)
@@ -340,13 +354,13 @@ def RemoveOrigin(request, code):
         messages.add_message(request, messages.ERROR, "No se ha encontrado el origen.")
     return redirect('config_origins')
 
-class DestinationList(ListView):
+class DestinationList(StaffRequired, ListView):
     model = Destination
     template_name = 'traceability/config/destination_list.html'
     context_object_name = 'destination_list'
     paginate_by = 10
 
-class NewDestination(CreateView):
+class NewDestination(StaffRequired, CreateView):
     model = Destination
     fields = ['code', 'name', 'description']
     template_name = "traceability/config/destination_form.html"
@@ -354,14 +368,14 @@ class NewDestination(CreateView):
         messages.add_message(self.request, messages.SUCCESS, "Se ha registrado el nuevo destino.")
         return super().form_valid(form)
 
-class DestinationDetails(DetailView):
+class DestinationDetails(StaffRequired, DetailView):
     model = Destination
     template_name = 'traceability/config/destination_details.html'
     context_object_name = 'd'
     slug_url_kwarg = 'code'
     slug_field = 'code'
 
-class ModifyDestination(UpdateView):
+class ModifyDestination(StaffRequired, UpdateView):
     model = Destination
     fields = ['name', 'description']
     template_name = "traceability/config/destination_form.html"
@@ -371,6 +385,7 @@ class ModifyDestination(UpdateView):
         messages.add_message(self.request, messages.SUCCESS, "Se ha modificado el destino.")
         return super().form_valid(form)
 
+@user_passes_test(lambda u: u.is_staff, login_url=reverse_lazy('login'))
 def RemoveDestination(request, code):
     try:
         o = Destination.objects.get(code = code)
