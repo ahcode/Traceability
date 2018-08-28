@@ -11,12 +11,12 @@
 </table>
 <a href="{% url 'modify_key' hash=key.hash %}" class="btn btn-primary">Modificar</a>
 {% if key.current_status != 'active' %}
-<a href="{% url 'activate_key' hash=key.hash %}" class="btn btn-success" role="button">Activar</a>
+<a href="{% url 'activate_key' hash=key.hash %}?next={{ request.path }}" class="btn btn-success" role="button">Activar</a>
 {% endif %}
 {% if key.current_status == 'active' %}
-<a href="{% url 'deactivate_key' hash=key.hash %}" class="btn btn-danger" role="button">Desactivar</a>
+<a href="{% url 'deactivate_key' hash=key.hash %}?next={{ request.path }}" class="btn btn-danger" role="button">Desactivar</a>
 {% endif %}
 {% if key.current_status == 'new' %}
-<a href="{% url 'remove_key' hash=key.hash %}" class="btn btn-danger" role="button">Eliminar</a>
+<a href="{% url 'remove_key' hash=key.hash %}?next={% url 'keys_pending' %}" class="btn btn-danger" role="button">Eliminar</a>
 {% endif %}
 {% endblock %}

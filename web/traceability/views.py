@@ -63,13 +63,6 @@ class KeyDetails(StaffRequired, DetailView):
     slug_url_kwarg = 'hash'
     slug_field = 'hash'
     context_object_name = 'key'
-    def get(self, request, *args, **kwargs):
-        try:
-            self.object = self.get_object()
-        except Http404:
-            return redirect('keys')
-        context = self.get_context_data(object=self.object)
-        return self.render_to_response(context)
 
 @user_passes_test(lambda u: u.is_staff, login_url=reverse_lazy('login'))
 def ActivateKey(request, hash):
@@ -80,7 +73,7 @@ def ActivateKey(request, hash):
         messages.add_message(request, messages.SUCCESS, "La clave '" + k.name + "' se ha activado correctamente.")
     except ObjectDoesNotExist:
         messages.add_message(request, messages.ERROR, "No se ha encontrado la clave.")
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseRedirect(request.GET.get('next', '/'))
 
 @user_passes_test(lambda u: u.is_staff, login_url=reverse_lazy('login'))
 def DeactivateKey(request, hash):
@@ -91,7 +84,7 @@ def DeactivateKey(request, hash):
         messages.add_message(request, messages.SUCCESS, "La clave '" + k.name + "' se ha desactivado correctamente.")
     except ObjectDoesNotExist:
         messages.add_message(request, messages.ERROR, "No se ha encontrado la clave.")
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseRedirect(request.GET.get('next', '/'))
 
 @user_passes_test(lambda u: u.is_staff, login_url=reverse_lazy('login'))
 def RemoveKey(request, hash):
@@ -104,7 +97,7 @@ def RemoveKey(request, hash):
             messages.add_message(request, messages.SUCCESS, "La clave '" + k.name + "' se ha eliminado correctamente.")
     except ObjectDoesNotExist:
         messages.add_message(request, messages.ERROR, "No se ha encontrado la clave.")
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseRedirect(request.GET.get('next', '/'))
 
 class NewKey(StaffRequired, CreateView):
     model = Key
@@ -242,7 +235,7 @@ class TransactionDetail(DetailView):
 def ChangeRemoteRegisterStatus(request, value):
     if value == 'on' or value == 'off':
         utils.set_register_status(value)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseRedirect(request.GET.get('next', '/'))
 
 class IdDetails(DetailView):
     model = ProductID

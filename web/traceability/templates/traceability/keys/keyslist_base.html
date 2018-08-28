@@ -38,8 +38,8 @@
 <a href="{% url 'new_key' %}" class="mb-2 btn btn-primary">Nueva Clave</a><br>
 <span>Registro remoto:</span>
 <div class="btn-group">
-    <button onclick="location.href='{% url 'remote_register' 'on' %}';" class="border btn {% if remote_register == 'on' %}btn-success active{% endif %}">On</button>
-    <button onclick="location.href='{% url 'remote_register' 'off' %}';" class="border btn {% if remote_register == 'off' %}btn-danger active{% endif %}">Off</button>
+    <button onclick="location.href='{% url 'remote_register' 'on' %}?next={{ request.path }}';" class="border btn {% if remote_register == 'on' %}btn-success active{% endif %}">On</button>
+    <button onclick="location.href='{% url 'remote_register' 'off' %}?next={{ request.path }}';" class="border btn {% if remote_register == 'off' %}btn-danger active{% endif %}">Off</button>
 </div>
 </div>
 {% if is_paginated %}
