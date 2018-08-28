@@ -1,5 +1,5 @@
 Django==2.1
 psycopg2==2.7.5
-pycryptodome==3.6.4
+pycryptodome==3.6.6
 django-bootstrap-form==3.4
 requests==2.19.1
