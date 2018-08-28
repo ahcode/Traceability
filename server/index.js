@@ -8,6 +8,6 @@ app.use(bodyParser.json());
 
 app.use(handler.router);
 
-app.listen(8080, function() {
+app.listen(parseInt(process.env.SERVER_PORT), function() {
   console.log("Traceability server running...");
 });
