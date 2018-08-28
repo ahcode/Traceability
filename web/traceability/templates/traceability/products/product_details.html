@@ -21,7 +21,7 @@
     <div id="qrcode"></div>
     <script src="{% static "qrcode.min.js" %}"></script>
     <script type="text/javascript">
-    new QRCode(document.getElementById("qrcode"), "{{ request.get_host }}{% url 'id_details' p.id %}");
+    new QRCode(document.getElementById("qrcode"), "{{ qr_hostname }}{% url 'id_details' p.id %}");
     </script>
 </div>
 </div>

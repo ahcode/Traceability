@@ -10,6 +10,7 @@ from django.db.models import Q
 from .models import *
 from django.http import Http404
 from traceability import utils
+from traceability_web.settings import QR_HOSTNAME
 
 class StaffRequired(LoginRequiredMixin, UserPassesTestMixin):
     login_url = reverse_lazy('login')
@@ -262,6 +263,7 @@ class IdDetails(DetailView):
             if context[self.context_object_name].destination:
                 try: context['destination'] = Destination.objects.get(code = context[self.context_object_name].destination)
                 except ObjectDoesNotExist: pass
+        context['qr_hostname'] = QR_HOSTNAME
         return context
 
 class IdSearch(View):
