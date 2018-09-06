@@ -3,11 +3,12 @@ import os
 import json
 from django.core.exceptions import ObjectDoesNotExist
 from .models import TransactionInput, Transaction, Origin
+from django.conf import settings
 
 def get_register_status():
     json_data = {"config_key": os.environ.get('REMOTE_CONFIG_KEY', '')}
     try:
-        r = requests.post(os.environ.get('API_URL', '') + "/get_register_status", json_data)
+        r = requests.post(os.environ.get('API_URL', '') + "/get_register_status", json_data, verify=settings.SSL_VERIFICATION)
         r_obj = json.loads(r.text)
         if r_obj['status'] == 'ERROR':
             return False
@@ -19,7 +20,7 @@ def get_register_status():
 def set_register_status(value):
     json_data = {"config_key": os.environ.get('REMOTE_CONFIG_KEY', ''), "remote_register": value}
     try:
-        requests.post(os.environ.get('API_URL', '') + "/set_register_status", json_data)
+        requests.post(os.environ.get('API_URL', '') + "/set_register_status", json_data, verify=settings.SSL_VERIFICATION)
     except:
         pass
     

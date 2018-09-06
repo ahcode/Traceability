@@ -4,10 +4,12 @@ import requests
 import json
 import pyTraceability
 
+verify = os.environ.get('DISABLE_SSL_VALIDATION', '') != 'TRUE'
+
 def register_key(key_name,  public_key):
     json_data = {"name": key_name, "key": public_key}
     try:
-        r = requests.post(API_URL + "/register", json_data)
+        r = requests.post(API_URL + "/register", json_data, verify=verify)
     except:
         raise Exception("Connection error.")
     
@@ -18,7 +20,7 @@ def register_key(key_name,  public_key):
 def send_transaction(transaction):
     try:
         headers={'Content-type': 'application/json', 'charset': 'utf-8'}
-        r = requests.post(API_URL + "/newtransaction", headers = headers, data = transaction)
+        r = requests.post(API_URL + "/newtransaction", headers = headers, data = transaction, verify=verify)
     except:
         raise Exception("Connection error.")
     
@@ -28,7 +30,7 @@ def send_transaction(transaction):
 
 def check_version():
     try:
-        r = requests.get(API_URL + "/version")
+        r = requests.get(API_URL + "/version", verify=verify)
     except:
         raise Exception("Connection error.")
     
@@ -41,7 +43,7 @@ def check_version():
 def check_key(keyhash):
     try:
         headers={'Content-type': 'application/json', 'charset': 'utf-8'}
-        r = requests.post(API_URL + "/keycheck", headers = headers, data = json.dumps({'key' : keyhash}))
+        r = requests.post(API_URL + "/keycheck", headers = headers, data = json.dumps({'key' : keyhash}), verify=verify)
     except:
         raise Exception("Connection error.")
 

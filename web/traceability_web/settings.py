@@ -25,8 +25,15 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_PRODUCTION', '') != 'TRUE'
 
+SSL_VERIFICATION = os.environ.get('DISABLE_SSL_VALIDATION', '') != 'TRUE'
+
 ALLOWED_HOSTS = ['127.0.0.1']
 
+if os.environ.get('DJANGO_HTTPS', '') == "TRUE":
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 # Application definition
 
