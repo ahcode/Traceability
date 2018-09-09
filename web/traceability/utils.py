@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import TransactionInput, Transaction, Origin
 from django.conf import settings
 
+#Envía una petición al servidor de transacciones para conocer el estado de registro
 def get_register_status():
     json_data = {"config_key": os.environ.get('REMOTE_CONFIG_KEY', '')}
     try:
@@ -17,13 +18,15 @@ def get_register_status():
     except:
         return False
 
+#Envía una petición al servidor de transacciones para modificar el estado de registro
 def set_register_status(value):
     json_data = {"config_key": os.environ.get('REMOTE_CONFIG_KEY', ''), "remote_register": value}
     try:
         requests.post(os.environ.get('API_URL', '') + "/set_register_status", json_data, verify=settings.SSL_VERIFICATION)
     except:
         pass
-    
+
+#Busca y devuelve la materia prima de un producto identificado
 def get_origins(product_id_obj):
     t_list = list(TransactionInput.objects.filter(t_hash = product_id_obj.last_transaction).values_list('input', flat=True))
     origin_dict = {}

@@ -6,6 +6,7 @@ import pyTraceability
 
 verify = os.environ.get('DISABLE_SSL_VALIDATION', '') != 'TRUE'
 
+#Registrar nueva clave
 def register_key(key_name,  public_key):
     json_data = {"name": key_name, "key": public_key}
     try:
@@ -17,6 +18,7 @@ def register_key(key_name,  public_key):
     if r_obj['status'] == 'ERROR':
         raise Exception("Communication error. " + r_obj['error'])
 
+#Enviar una transacción
 def send_transaction(transaction):
     try:
         headers={'Content-type': 'application/json', 'charset': 'utf-8'}
@@ -28,6 +30,7 @@ def send_transaction(transaction):
     if r_obj['status'] == 'ERROR':
         raise Exception("Communication error. " + r_obj['error'])
 
+#Comprobar versión de protocolo
 def check_version():
     try:
         r = requests.get(API_URL + "/version", verify=verify)
@@ -40,6 +43,7 @@ def check_version():
     if r_obj['protocol_version'] != pyTraceability.protocol_version:
         raise Exception("Different protocol version between client and server.")
 
+#Comprobar clave
 def check_key(keyhash):
     try:
         headers={'Content-type': 'application/json', 'charset': 'utf-8'}

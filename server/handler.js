@@ -4,7 +4,7 @@ var crypto = require('./cryptography.js');
 var utils = require('./utils.js');
 
 router.post('/register', function(req, res) {
-    if (utils.get_config_variable('register_opened')){ //FALTA COMPROBAR SI EL REGISTRO ESTÁ ABIERTO
+    if (utils.get_config_variable('register_opened')){
         var json = req.body;
         //Comprobar formato del objeto recibido
         var fres = utils.checkregisterformat(json)

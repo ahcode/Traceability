@@ -1,10 +1,6 @@
-class TraceabilityDatabaseRouter(object):
-    """
-    Determine how to route database calls for an app's models.
-    All other models will be routed to the next router in the DATABASE_ROUTERS setting if applicable,
-    or otherwise to the default database.
-    """
+#Establece la configuración necesaria para no gestionar la base de datos de trazabilidad
 
+class TraceabilityDatabaseRouter(object):
     def db_for_read(self, model, **hints):
         if model._meta.app_label == 'traceability':
             return 'traceability'

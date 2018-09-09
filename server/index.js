@@ -11,6 +11,7 @@ app.use(bodyParser.json());
 
 app.use(handler.router);
 
+//Gestionar la clave y certificado SSL si el modo HTTPS está activado
 if(process.env.NODE_HTTPS == "TRUE"){
   var privateKey  = fs.readFileSync(process.env.SSL_KEY, 'utf8');
   var certificate = fs.readFileSync(process.env.SSL_CRT, 'utf8');
@@ -20,6 +21,7 @@ if(process.env.NODE_HTTPS == "TRUE"){
   server = http.createServer(app);
 }
 
+//Inicia el servidor
 server.listen(parseInt(process.env.SERVER_PORT), function() {
   console.log("Traceability server running...");
 });

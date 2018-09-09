@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var db = require('./db.js');
 
+//Crea un hash sha256 a partir de una cadena de texto
 module.exports.create_hash = function(text){
     var hash = crypto.createHash('sha256').update(text, 'utf-8').digest('hex')
     return hash;

@@ -3,6 +3,7 @@ var fs = require('fs');
 var config_filename = './config.json'
 var config = require(config_filename)
 
+//Comprueba que el formato de la petición de registro sea correcto
 module.exports.checkregisterformat = function(json){
     if (!json.hasOwnProperty("name") || typeof json.name != 'string' ||
         !json.hasOwnProperty("key") || typeof json.key != 'string')
@@ -10,6 +11,7 @@ module.exports.checkregisterformat = function(json){
     return {};
 };
 
+//Comprueba que el formato de la transacción sea correcto
 module.exports.checktransactionformat = function(json){
     if (!json.hasOwnProperty("type") || typeof json.type != 'number' ||
         json.type < 0 || json.type > 2){
@@ -38,12 +40,10 @@ module.exports.checktransactionformat = function(json){
         return {'error' : "sign must be a string"}
     }
     
-    //TODO falta comprobar el interior de data
-    
     return {};
 };
 
-//Actualiza la tabla available_inputs
+//Actualiza la tabla available_inputs, enlaca transacciones y registra identificadores de productos
 module.exports.update_inputs = function(transaction){
     //Si no hay receptor, la transacción la recibe el transmisor
     if (transaction.hasOwnProperty('receiver'))
@@ -115,6 +115,7 @@ module.exports.update_inputs = function(transaction){
     }
 };
 
+//Procesa los productos de entrada
 function process_input(key, transaction_hash, mode, product, quantity){
     return db.get_available_inputs(key, product)
     .then(function(inputs){
@@ -165,6 +166,7 @@ function process_input(key, transaction_hash, mode, product, quantity){
     });
 }
 
+//Procesa los productos de salida
 function process_output(key, transaction_hash, product, quantity){
     db.get_available_inputs(key, product)
     .then(function(inputs){
@@ -179,6 +181,7 @@ function process_output(key, transaction_hash, product, quantity){
     });
 }
 
+//Mezcla los productos que posee una clave para combinar los orígenes
 function mix_product(inputs){
     if(inputs.length > 1){
         var sum = 0;
@@ -192,6 +195,7 @@ function mix_product(inputs){
     }
 }
 
+//Establece el valor de una variable de configuración
 module.exports.set_config_variable = function(name, value){
     config[name] = value;
     fs.writeFile(config_filename, JSON.stringify(config, null, 4), (err) => {
@@ -199,6 +203,7 @@ module.exports.set_config_variable = function(name, value){
     });
 }
 
+//Devuelve el valor de una variable de configuración
 module.exports.get_config_variable = function(name){
     if(config.hasOwnProperty(name)){
         return config[name];

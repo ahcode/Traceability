@@ -9,7 +9,7 @@ from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 
-# Create your models here.
+#Modelo clave, representa una clave pública de una etapa de la cadena de producción
 class Key(models.Model):
     hash = models.CharField(max_length=64, primary_key=True)
     public_key = models.TextField('Clave Pública', max_length=300)
@@ -31,6 +31,7 @@ class Key(models.Model):
     class Meta:
         db_table = 'keys'
 
+#Modelo transacción, representa una transacción registrada en el sistema
 class Transaction(models.Model):
     hash = models.CharField(max_length=64, primary_key=True)
     type = models.IntegerField()
@@ -69,6 +70,7 @@ class Transaction(models.Model):
         verifier = PKCS1_v1_5.new(keyobject)
         return verifier.verify(calculated_hash, bytes.fromhex(self.sign))
 
+#Modelo entrada de transacción, representa un enlace entre dos transacciones
 class TransactionInput(models.Model):
     t_hash = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='transaction', db_column='t_hash')
     input = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='input', db_column='input')
@@ -78,6 +80,7 @@ class TransactionInput(models.Model):
         db_table = 't_inputs'
         unique_together = (('t_hash', 'input', 'product'),)
 
+#Modelo identificador de producto, mantiene el identificador y los detalles de un determinado producto
 class ProductID(models.Model):
     id = models.CharField(max_length=64, primary_key=True)
     product = models.CharField(max_length=64)
@@ -89,6 +92,7 @@ class ProductID(models.Model):
     class Meta:
         db_table = 'product_id'
 
+#Modelo producto, identifica un tipo de producto y añade información extra a las transacciones que lo utilicen
 class Product(models.Model):
     code = models.CharField('Código', max_length=64, primary_key=True)
     name = models.CharField('Nombre', max_length=64)
@@ -102,6 +106,7 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('product_details', kwargs={'code': self.code})
 
+#Modelo origen, añade información extra a un origen
 class Origin(models.Model):
     code = models.CharField('Código', max_length=64, primary_key=True)
     name = models.CharField('Nombre', max_length=64)
@@ -113,6 +118,7 @@ class Origin(models.Model):
     def get_absolute_url(self):
         return reverse('origin_details', kwargs={'code': self.code})
 
+#Modelo destino, añade información extra a un destion
 class Destination(models.Model):
     code = models.CharField('Código', max_length=64, primary_key=True)
     name = models.CharField('Nombre', max_length=64)

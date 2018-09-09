@@ -10,6 +10,7 @@ key = None
 key_name = None
 fich = None
 
+#Primer menú
 def menu():
     opcion = 0
     while(opcion < 1 or opcion > 3):
@@ -23,6 +24,7 @@ def menu():
         sys.exit()
     menu2()
 
+#Segundo menú
 def menu2():
     opcion = 0
     while(opcion < 1 or opcion > 3):
@@ -36,6 +38,7 @@ def menu2():
     else:
         sys.exit()
 
+#Cargar clave de fichero
 def load_key():
     global key_name
     global fich
@@ -48,6 +51,7 @@ def load_key():
         global key
         key = Key(fich)
 
+#Generar nueva clave
 def new_key():
     global key
     global fich
@@ -59,5 +63,6 @@ def new_key():
         print("El nombre elegido ya existe.")
     key.save_key(fich)
 
+#Bucle Principal
 while True:
     menu()
