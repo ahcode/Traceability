@@ -92,8 +92,7 @@ class ProductID(models.Model):
 class Product(models.Model):
     code = models.CharField('Código', max_length=64, primary_key=True)
     name = models.CharField('Nombre', max_length=64)
-    min_measure_unit = models.CharField('Unidad de medida mínima', max_length=20)
-    measure_unit = models.CharField('Unidad de medida', max_length=20, null=True, blank=True)
+    measure_unit = models.CharField('Unidad de medida', max_length=20)
     multiplier = models.IntegerField('Multiplicador', blank=True, default=1)
     description = models.TextField('Descripción', max_length=300, null=True, blank=True)
     

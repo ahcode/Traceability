@@ -209,17 +209,16 @@ class TransactionDetail(DetailView):
             else:
                 l[-1]['quantity'] = p[1]
                 if p_obj:
-                    if p_obj.measure_unit:
-                        l[-1]['unit'] = p_obj.measure_unit
-                        l[-1]['quantity'] /= p_obj.multiplier
-                    else:
-                        l[-1]['unit'] = p_obj.min_measure_unit
+                    l[-1]['unit'] = p_obj.measure_unit
+                    l[-1]['multiplier'] = p_obj.multiplier
         return l
 
     def set_quantity(self, p_list, updated_quantity):
         for p in p_list:
             if 'quantity' in p and p['quantity'] == None:
                 p['quantity'] = updated_quantity[p['product']]
+            if 'multiplier' in p:
+                p['quantity'] /= p['multiplier']
 
     def set_pre_transactions(self, p_list, hash):
         for p in p_list:
@@ -275,7 +274,7 @@ class ProductList(StaffRequired, ListView):
 
 class NewProduct(StaffRequired, CreateView):
     model = Product
-    fields = ['code', 'name', 'min_measure_unit', 'measure_unit', 'multiplier', 'description']
+    fields = ['code', 'name', 'measure_unit', 'multiplier', 'description']
     template_name = "traceability/config/product_form.html"
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, "Se ha registrado el nuevo producto.")
@@ -283,7 +282,7 @@ class NewProduct(StaffRequired, CreateView):
 
 class ModifyProduct(StaffRequired, UpdateView):
     model = Product
-    fields = ['name', 'min_measure_unit', 'measure_unit', 'multiplier', 'description']
+    fields = ['name', 'measure_unit', 'multiplier', 'description']
     template_name = "traceability/config/product_form.html"
     slug_url_kwarg = 'code'
     slug_field = 'code'

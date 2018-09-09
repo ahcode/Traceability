@@ -5,9 +5,8 @@
 <table class="mt-5 mb-3 table" style="max-width: 600px; margin: auto">
     <tr><td class = "text-left"><span class="font-weight-bold text-left">Código:</span></td><td>{{ p.code }}</td></tr>
     <tr><td class = "text-left"><span class="font-weight-bold text-left">Nombre:</span></td><td>{{ p.name }}</td></tr>
-    <tr><td class = "text-left"><span class="font-weight-bold text-left">Unidad mínima:</span></td><td>{{ p.min_measure_unit }}</td></tr>
-    {% if p.measure_unit %}
-    <tr><td class = "text-left"><span class="font-weight-bold text-left">Unidad:</span></td><td>{{ p.measure_unit }}</td></tr>
+    <tr><td class = "text-left"><span class="font-weight-bold text-left">Unidad de medida:</span></td><td>{{ p.measure_unit }}</td></tr>
+    {% if p.multiplier != 1 %}
     <tr><td class = "text-left"><span class="font-weight-bold text-left">Multiplicador:</span></td><td>{{ p.multiplier }}</td></tr>
     {% endif %}
     <tr><td class = "text-left"><span class="font-weight-bold text-left">Descripción:</span></td><td>{% if p.description %}{{ p.description|linebreaks }}{% else %}<span class="font-weight-light">No hay descripción</span>{% endif %}</td></tr>

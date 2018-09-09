@@ -27,7 +27,7 @@ DEBUG = os.environ.get('DJANGO_PRODUCTION', '') != 'TRUE'
 
 SSL_VERIFICATION = os.environ.get('DISABLE_SSL_VALIDATION', '') != 'TRUE'
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 if os.environ.get('DJANGO_HTTPS', '') == "TRUE":
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

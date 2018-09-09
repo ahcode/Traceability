@@ -49,8 +49,7 @@ CREATE TABLE product_id(
 CREATE TABLE product_types(
 	code varchar(64) PRIMARY KEY NOT NULL,
 	name varchar(64) NOT NULL,
-	min_measure_unit varchar(20) NOT NULL,
-	measure_unit varchar(20),
+	measure_unit varchar(20) NOT NULL,
 	multiplier int,
 	description varchar(300)
 );
