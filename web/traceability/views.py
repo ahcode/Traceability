@@ -194,6 +194,7 @@ class TransactionDetail(DetailView):
                 context['product_in'] = self.make_product_list(obj.transaction_data['product_in'])
                 context['product_out'] = self.make_product_list(obj.transaction_data['product_out'], newid)
                 self.set_quantity(context['product_in'], obj.updated_quantity)
+                self.set_quantity(context['product_out'], obj.updated_quantity)
                 self.set_pre_transactions(context['product_in'], obj.hash)
                 self.set_post_transactions(context['product_out'], obj.hash)
             if 'origin' in obj.transaction_data:
