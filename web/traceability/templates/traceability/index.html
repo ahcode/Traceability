@@ -1,5 +1,45 @@
 {% extends 'base.html' %}
 {% block nav-home %}active{% endblock %}
 {% block content %}
-<h1 class="mt-5">Página de Inicio</h1>
+<h4 class="mt-5">Bienvenido al sistema de gestión de trazabilidad.</h4>
+<h5 class="font-italic mb-5">Desde esta web podrás acceder a las diferentes funciones de monitorización y control que ofrece el sistema.</h5>
+<div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="card-title">Transacciones</h2>
+          <i class="flaticon-list"></i>
+          <p class="card-text">Consulta las transacciones que generan las distintas etapas de la cadena de producción para conocer en todo momento lo que está sucediendo.</p>
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'transactions' %}" class="btn btn-primary">Explorar Transacciones</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="card-title">Productos</h2>
+          <i class="flaticon-search"></i>
+          <p class="card-text">¿Quieres localizar un producto a partir de su identificador? Utiliza la herramienta de localización y podrás consultar su estado actual y su procedencia.</p>
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'id_search' %}" class="btn btn-primary">Localizar Producto</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="card-title">Administración</h2>
+          <i class="flaticon-config"></i>
+          <p class="card-text">Inicia sesión con una cuenta autorizada para acceder a las funciones de administración que te permitirán configurar el sistema.</p>
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'login' %}" class="btn btn-primary">Iniciar Sesión</a>
+        </div>
+      </div>
+    </div>
+
+</div>
 {% endblock %}
